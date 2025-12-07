@@ -51,7 +51,7 @@ export async function POST(request) {
       endDate,
       registrationStartDate,
       registrationEndDate,
-      status: status || "active",
+      status: "active",
       participants: [],
     });
 
