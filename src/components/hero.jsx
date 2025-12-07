@@ -26,7 +26,7 @@ const Hero = () => {
           <div className="flex flex-col sm:flex-row gap-4">
             {/* Browse Moots Button */}
             <Link
-              href="/moots"
+              href="/competitions"
               className="px-8 py-3 rounded-md font-bold text-lg shadow-sm hover:bg-gray-100 transition-colors duration-200"
               style={{ backgroundColor: "white", color: colors.teal }}
             >
@@ -35,7 +35,7 @@ const Hero = () => {
 
             {/* Join JuriLingo Button */}
             <Link
-              href="/register"
+              href="/auth/register"
               className="px-8 py-3 rounded-md font-bold text-lg shadow-sm hover:shadow-md hover:brightness-105 transition-all duration-200"
               style={{ backgroundColor: colors.gold, color: colors.teal }}
             >

@@ -1,10 +1,9 @@
+'use client';
+
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
-  Scale,
-  Facebook,
-  Twitter,
-  Linkedin,
   Mail,
   Phone,
 } from "lucide-react";
@@ -26,8 +25,16 @@ const Footer = () => {
           {/* Column 1: Brand Info */}
           <div className="flex flex-col gap-6">
             <div className="flex items-center gap-3">
-              <Scale size={32} style={{ color: colors.gold }} />
-              <span className="text-2xl font-bold font-serif">JuriLingo</span>
+              <div className="relative">
+                <Image
+                  src="/logo.png"
+                  alt="JuriLingo Logo"
+                  width={50}
+                  height={50}
+                  className="transform group-hover:scale-110 transition-transform duration-300"
+                />
+              </div>
+              <span className="text-2xl font-bold font-sans">JuriLingo</span>
             </div>
             <p className="text-white/80 leading-relaxed text-sm">
               Connecting moot court competitors, judges, and organizers in one
@@ -39,19 +46,19 @@ const Footer = () => {
                 href="#"
                 className="bg-white/10 p-2 rounded-full hover:bg-white/20 transition-colors text-white"
               >
-                <Facebook size={20} />
+                Instagram
               </Link>
               <Link
                 href="#"
                 className="bg-white/10 p-2 rounded-full hover:bg-white/20 transition-colors text-white"
               >
-                <Twitter size={20} />
+                Youtube
               </Link>
               <Link
                 href="#"
                 className="bg-white/10 p-2 rounded-full hover:bg-white/20 transition-colors text-white"
               >
-                <Linkedin size={20} />
+                Linkdin
               </Link>
             </div>
           </div>
@@ -75,15 +82,15 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  href="/moots"
+                  href="/competitions"
                   className="text-white/80 hover:text-white transition-colors"
                 >
-                  Moots
+                  Competitions
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/about"
+                  href="/about/jurilingo"
                   className="text-white/80 hover:text-white transition-colors"
                 >
                   About JuriLingo
@@ -91,15 +98,15 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  href="/team"
+                  href="/about/founder"
                   className="text-white/80 hover:text-white transition-colors"
                 >
-                  Meet the Team
+                  Meet the Founder
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/register"
+                  href="/auth/register"
                   className="text-white/80 hover:text-white transition-colors"
                 >
                   Register
@@ -119,34 +126,18 @@ const Footer = () => {
             <ul className="space-y-4 text-sm">
               <li>
                 <Link
-                  href="/faq"
+                  href="/blogs"
                   className="text-white/80 hover:text-white transition-colors"
                 >
-                  FAQ
+                  Blogs
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/blog"
+                  href="/podcasts"
                   className="text-white/80 hover:text-white transition-colors"
                 >
-                  Blog
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/terms"
-                  className="text-white/80 hover:text-white transition-colors"
-                >
-                  Terms of Service
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/privacy"
-                  className="text-white/80 hover:text-white transition-colors"
-                >
-                  Privacy Policy
+                  Podcasts
                 </Link>
               </li>
             </ul>
@@ -167,7 +158,7 @@ const Footer = () => {
                   href="mailto:jurilingo.outlook.com"
                   className="text-white/90 hover:text-white"
                 >
-                  jurilingo.outlook.com
+                  jurilingo.blog@outlook.com
                 </a>
               </li>
               <li className="flex items-center gap-3">

@@ -77,11 +77,11 @@ const Navbar = () => {
             />
           </div>
           <div className="flex flex-col">
-            <h1 className="text-white font-bold text-2xl leading-tight tracking-tight font-serif">
+            <h1 className="text-white font-bold text-2xl leading-tight tracking-tight font-sans">
               JuriLingo
             </h1>
             <span
-              className="text-xs font-medium tracking-wide"
+              className="text font-medium tracking-wide"
               style={{ color: colors.gold }}
             >
               Unlocking the Language of Justice
