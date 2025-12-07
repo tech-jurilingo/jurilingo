@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/db";
 import Competition from "@/models/Competition";
-import { verifyToken } from "@/middleware/auth";
-import { verifyCompetitor } from "@/middleware/verifyCompetitor";
+import { verifyToken } from "@/middlewares/auth";
+import { verifyCompetitor } from "@/middlewares/verifyCompetitor";
 
 // POST /api/competition/:competitionId/register - Competitor only
 export async function POST(request, { params }) {
