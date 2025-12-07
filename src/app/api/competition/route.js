@@ -47,13 +47,12 @@ export async function POST(request) {
       title,
       description,
       registrationFee,
-      date,
       startDate,
       endDate,
       registrationStartDate,
       registrationEndDate,
       status: status || "active",
-      participants: participants || [],
+      participants: [],
     });
 
     return NextResponse.json(
