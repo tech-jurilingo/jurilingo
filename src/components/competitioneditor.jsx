@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { Trophy, Clock, Save } from "lucide-react";
+import Image from "next/image";
 
 const CompetitionEditor = () => {
   const [formData, setFormData] = useState({
@@ -102,7 +103,13 @@ const CompetitionEditor = () => {
             </p>
           </div>
           <div className="hidden sm:block">
-            <Trophy size={32} style={{ color: colors.gold }} />
+            <Image
+              src="/logo.png"
+              alt="JuriLingo Logo"
+              width={80}
+              height={80}
+              priority
+            />
           </div>
         </div>
 

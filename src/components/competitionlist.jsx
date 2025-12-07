@@ -5,6 +5,11 @@ import { Calendar, Clock, Users, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
+/*
+───────────────────────────────────────────────────────────────
+ FULL ORIGINAL COMPONENT — COMPLETELY COMMENTED OUT
+───────────────────────────────────────────────────────────────
+
 const CompetitionsList = () => {
   const [competitions, setCompetitions] = useState([]);
   const [user, setUser] = useState(null);
@@ -20,14 +25,12 @@ const CompetitionsList = () => {
         setLoading(true);
         setError("");
 
-        // Validate user token
         const userResponse = await fetch('/api/auth/validate-token');
         if (userResponse.ok) {
           const userData = await userResponse.json();
           setUser(userData);
         }
 
-        // Fetch competitions
         const res = await fetch("/api/competition", { method: "GET" });
         const data = await res.json();
 
@@ -74,7 +77,6 @@ const CompetitionsList = () => {
       return;
     }
 
-    // Check if user is already in waitlist or participants
     const isInWaitlist = competition.waitlist?.some(
       (item) => item.user === user.userId
     );
@@ -107,7 +109,7 @@ const CompetitionsList = () => {
 
       if (data.success) {
         alert("Registration successful! Your application is pending admin approval.");
-        // Refresh competitions list
+
         const res = await fetch("/api/competition/status/all/list");
         const updatedData = await res.json();
         if (updatedData.success) {
@@ -142,7 +144,6 @@ const CompetitionsList = () => {
 
       if (data.success) {
         alert("Competition deleted successfully!");
-        // Remove from local state
         setCompetitions(competitions.filter(c => c._id !== competitionId));
       } else {
         alert(data.message || "Failed to delete competition");
@@ -163,18 +164,16 @@ const CompetitionsList = () => {
       style={{ backgroundColor: colors.bg }}
     >
       <div className="max-w-5xl mx-auto">
-        {/* Header */}
+
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold font-serif text-[#002B36] mb-4">
             Upcoming Competitions
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Browse and register for prestigious national & international moot
-            court competitions.
+            Browse and register for prestigious national & international moot court competitions.
           </p>
         </div>
 
-        {/* Loading / Error States */}
         {loading ? (
           <div className="text-center py-20 text-gray-500">
             Loading competitions...
@@ -198,14 +197,11 @@ const CompetitionsList = () => {
                   key={comp._id}
                   className="bg-white rounded-xl shadow-md border border-gray-100 p-6 md:p-8 flex flex-col gap-6 transition-all hover:shadow-lg"
                 >
-                  {/* Main Content */}
                   <div className="flex flex-col md:flex-row gap-6">
-                    {/* Left Side */}
+
                     <div className="grow">
-                      {/* Status Row */}
                       <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
                         <div className="flex items-center gap-2">
-                          {/* Active/Inactive */}
                           <span
                             className={`inline-block px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full ${
                               isActive
@@ -216,7 +212,6 @@ const CompetitionsList = () => {
                             {comp.status}
                           </span>
 
-                          {/* Registration Open/Closed */}
                           <span
                             className={`inline-block px-3 py-1 text-xs font-semibold rounded-full ${
                               isRegistrationOpen
@@ -230,13 +225,11 @@ const CompetitionsList = () => {
                           </span>
                         </div>
 
-                        {/* Fee */}
-                        <span className="text-sm text-gray-600 flex items-center">
+                        <span className="text-sm text-gray-600">
                           Fee: ₹{comp.registrationFee}
                         </span>
                       </div>
 
-                      {/* Title */}
                       <Link 
                         href={`/competitions/by-id/${comp._id}`}
                         className="text-2xl font-bold text-[#002B36] mb-3 hover:text-[#005F63] transition-colors block"
@@ -244,24 +237,17 @@ const CompetitionsList = () => {
                         {comp.title}
                       </Link>
 
-                      {/* Dates Section */}
                       <div className="space-y-2 text-sm text-gray-600 mb-4">
-                        {/* Registration Period */}
                         <div className="flex items-start gap-2">
                           <Calendar size={16} className="text-[#E3B65B] mt-0.5" />
                           <span>
                             Registration:{" "}
-                            <strong>
-                              {formatDateTime(comp.registrationStartDate)}
-                            </strong>{" "}
+                            <strong>{formatDateTime(comp.registrationStartDate)}</strong>{" "}
                             –{" "}
-                            <strong>
-                              {formatDateTime(comp.registrationEndDate)}
-                            </strong>
+                            <strong>{formatDateTime(comp.registrationEndDate)}</strong>
                           </span>
                         </div>
 
-                        {/* Competition Schedule */}
                         <div className="flex items-start gap-2">
                           <Clock size={16} className="text-[#E3B65B] mt-0.5" />
                           <span>
@@ -271,20 +257,17 @@ const CompetitionsList = () => {
                           </span>
                         </div>
 
-                        {/* Participants */}
                         <div className="flex items-center gap-2 text-xs text-gray-500 mt-1">
                           <Users size={14} />
                           <span>{participantsCount} registered participants</span>
                         </div>
                       </div>
 
-                      {/* Description */}
                       <p className="text-gray-600 leading-relaxed line-clamp-3">
                         {comp.description}
                       </p>
                     </div>
 
-                    {/* Right Side: Action Buttons */}
                     <div className="flex flex-col justify-center gap-3 min-w-[220px] border-t md:border-t-0 md:border-l border-gray-100 pt-6 md:pt-0 md:pl-6">
                       <Link
                         href={`/competitions/by-id/${comp._id}`}
@@ -329,6 +312,24 @@ const CompetitionsList = () => {
           </div>
         )}
       </div>
+    </div>
+  );
+};
+
+───────────────────────────────────────────────────────────────
+ END ORIGINAL COMPONENT
+───────────────────────────────────────────────────────────────
+*/
+
+const CompetitionsList = () => {
+  return (
+    <div className="w-full py-24 bg-white text-center">
+      <h2 className="text-3xl font-bold text-[#005F63] mb-4">
+        Competitions
+      </h2>
+      <p className="text-gray-600 text-lg font-medium">
+        🚧 Coming Soon
+      </p>
     </div>
   );
 };

@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Link as LinkIcon, PlayCircle, Save } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 const PodcastEditor = () => {
   const [title, setTitle] = useState("");
@@ -95,6 +96,15 @@ const PodcastEditor = () => {
               Share a moot court recording or legal discussion
             </p>
           </div>
+            <div className="hidden sm:block">
+              <Image
+                src="/logo.png"
+                alt="JuriLingo Logo"
+                width={80}
+                height={80}
+                priority
+              />
+            </div>
         </div>
 
         {/* Form Container */}
