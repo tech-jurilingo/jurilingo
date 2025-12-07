@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Youtube, Link as LinkIcon, PlayCircle, Save } from "lucide-react";
+import { Link as LinkIcon, PlayCircle, Save } from "lucide-react";
 import Link from "next/link";
 
 const PodcastEditor = () => {
@@ -95,9 +95,6 @@ const PodcastEditor = () => {
               Share a moot court recording or legal discussion
             </p>
           </div>
-          <div className="hidden sm:block">
-            <Youtube size={32} style={{ color: "#FF0000" }} />
-          </div>
         </div>
 
         {/* Form Container */}
@@ -175,7 +172,6 @@ const PodcastEditor = () => {
             </div>
           ) : (
             <div className="mt-4 h-48 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center text-gray-400">
-              <Youtube size={48} className="opacity-20 mb-2" />
               <span className="text-sm">Video preview will appear here</span>
             </div>
           )}

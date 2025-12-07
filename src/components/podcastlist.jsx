@@ -97,7 +97,7 @@ const PodcastsList = () => {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold font-serif text-[#002B36] mb-4">
-            Moot Casts
+            Podcasts
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
             Watch and listen to expert discussions, tutorials, and competition

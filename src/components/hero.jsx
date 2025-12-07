@@ -1,17 +1,38 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 
 const Hero = () => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
   const colors = {
     teal: "#005F63",
     gold: "#E3B65B",
   };
 
+  useEffect(() => {
+    const validateToken = async () => {
+      try {
+        const response = await fetch('/api/auth/validate-token');
+        if (response.ok) {
+          const data = await response.json();
+          setUser(data);
+        }
+      } catch (error) {
+        console.error('Token validation error:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    validateToken();
+  }, []);
+
   return (
     <section className="w-full" style={{ backgroundColor: colors.teal }}>
-      <div className="max-w-7xl mx-auto px-4 md:px-8 py-20 md:py-32">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 py-20 md:py-16">
         <div className="max-w-3xl">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-6 tracking-tight">
             The Premier Marketplace for Moot Court Competitions
@@ -22,26 +43,19 @@ const Hero = () => {
             passionate competitors in one comprehensive platform.
           </p>
 
-          {/* Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4">
-            {/* Browse Moots Button */}
-            <Link
-              href="/competitions"
-              className="px-8 py-3 rounded-md font-bold text-lg shadow-sm hover:bg-gray-100 transition-colors duration-200"
-              style={{ backgroundColor: "white", color: colors.teal }}
-            >
-              Browse Competitions
-            </Link>
-
-            {/* Join JuriLingo Button */}
-            <Link
-              href="/auth/register"
-              className="px-8 py-3 rounded-md font-bold text-lg shadow-sm hover:shadow-md hover:brightness-105 transition-all duration-200"
-              style={{ backgroundColor: colors.gold, color: colors.teal }}
-            >
-              Join JuriLingo
-            </Link>
-          </div>
+          {/* Buttons - Only show if user is not logged in */}
+          {!loading && !user && (
+            <div className="flex flex-col sm:flex-row gap-4">
+              {/* Join JuriLingo Button */}
+              <Link
+                href="/register"
+                className="px-8 py-3 rounded-md font-bold text-lg shadow-sm hover:shadow-md hover:brightness-105 transition-all duration-200"
+                style={{ backgroundColor: colors.gold, color: colors.teal }}
+              >
+                Join JuriLingo
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </section>

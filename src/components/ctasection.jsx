@@ -29,22 +29,12 @@ const CTASection = () => {
           
           {/* Create Account */}
           <Link
-            href="/auth/register"
+            href="/competitions"
             className="px-8 py-3 rounded-md font-bold text-lg shadow-sm hover:shadow-md transform hover:-translate-y-0.5 transition-all duration-200 text-white"
             style={{ backgroundColor: colors.teal }}
           >
-            Create Your Account
+            Browse Competitions
           </Link>
-
-          {/* Learn More */}
-          <Link
-            href="/about/jurilingo"
-            className="px-8 py-3 rounded-md font-bold text-lg border-2 hover:bg-[#005F63] hover:text-white transition-all duration-200"
-            style={{ borderColor: colors.teal, color: colors.teal }}
-          >
-            Learn More
-          </Link>
-
         </div>
       </div>
     </section>

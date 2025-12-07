@@ -65,7 +65,7 @@ const CompetitionsList = () => {
   const handleRegister = async (competition) => {
     if (!user) {
       alert("Please login to register for competitions");
-      router.push('/login');
+      router.push('/auth/login');
       return;
     }
 
@@ -290,7 +290,7 @@ const CompetitionsList = () => {
                         href={`/competitions/by-id/${comp._id}`}
                         className="w-full px-8 py-3 rounded-md font-bold text-lg shadow-sm transition-all bg-gray-100 text-[#005F63] hover:bg-gray-200 text-center"
                       >
-                        View Detail
+                        View Details
                       </Link>
 
                       {!isAdmin && (

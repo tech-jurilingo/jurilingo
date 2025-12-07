@@ -27,7 +27,7 @@ const Footer = () => {
             <div className="flex items-center gap-3">
               <div className="relative">
                 <Image
-                  src="/logo.png"
+                  src="/logonav.png"
                   alt="JuriLingo Logo"
                   width={50}
                   height={50}
@@ -158,7 +158,7 @@ const Footer = () => {
                   href="mailto:jurilingo.outlook.com"
                   className="text-white/90 hover:text-white"
                 >
-                  jurilingo.blog@outlook.com
+                  jurilingo@outlook.com
                 </a>
               </li>
               <li className="flex items-center gap-3">

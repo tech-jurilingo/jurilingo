@@ -44,7 +44,7 @@ const RecentPodcasts = () => {
             className="text-3xl font-bold mb-10 text-center"
             style={{ color: colors.teal }}
           >
-            Latest Moot Casts
+            Spotlight: Legal Voices
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
@@ -74,7 +74,7 @@ const RecentPodcasts = () => {
             className="text-3xl font-bold mb-10 text-center"
             style={{ color: colors.teal }}
           >
-            Latest Moot Casts
+            Spotlight: Legal Voices
           </h2>
           <p className="text-center text-red-600">{error}</p>
         </div>
@@ -90,7 +90,7 @@ const RecentPodcasts = () => {
             className="text-3xl font-bold mb-10 text-center"
             style={{ color: colors.teal }}
           >
-            Latest Moot Casts
+            Spotlight: Legal Voices
           </h2>
           <p className="text-center text-gray-600">
             No podcasts available at the moment.
@@ -107,7 +107,7 @@ const RecentPodcasts = () => {
           className="text-3xl font-bold mb-10 text-center"
           style={{ color: colors.teal }}
         >
-          Latest Moot Casts
+          Spotlight: Legal Voices
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">

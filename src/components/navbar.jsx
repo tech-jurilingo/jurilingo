@@ -64,18 +64,20 @@ const Navbar = () => {
       className="w-full px-4 md:px-8 py-3 shadow-md relative z-50"
       style={{ backgroundColor: colors.teal }}
     >
-      <div className="max-w-7xl mx-auto flex justify-between items-center">
-        {/* --- LOGO SECTION --- */}
+      {/* FIXED NAVBAR HEIGHT */}
+      <div className="max-w-7xl mx-auto flex justify-between items-center h-20">
+
+        {/* LOGO SECTION — DO NOT CHANGE HEIGHT BASED ON LOGO SIZE */}
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="relative">
+          <div className="relative h-20 w-20 md:h-18 md:w-18">
             <Image
-              src="/logo.png"
+              src="/logonav.png"
               alt="JuriLingo Logo"
-              width={50}
-              height={50}
-              className="transform group-hover:scale-110 transition-transform duration-300"
+              fill
+              className="object-contain transform group-hover:scale-110 transition-transform duration-300"
             />
           </div>
+
           <div className="flex flex-col">
             <h1 className="text-white font-bold text-2xl leading-tight tracking-tight font-sans">
               JuriLingo
@@ -89,25 +91,24 @@ const Navbar = () => {
           </div>
         </Link>
 
-        {/* --- DESKTOP NAVIGATION --- */}
+        {/* DESKTOP NAVIGATION */}
         <div className="hidden md:flex items-center gap-8">
-          {/* Standard Links */}
           {navLinks.map((link) => (
             <Link
               key={link.name}
               href={link.href}
-              className="text-lg font-medium text-white transition-colors duration-200 hover:text-opacity-80 hover:text-[#E3B65B]"
+              className="text-lg font-medium text-white transition-colors duration-200 hover:text-[#E3B65B]"
             >
               {link.name}
             </Link>
           ))}
 
-          {/* About Dropdown */}
-          <div className="relative group">
+          {/* ABOUT DROPDOWN */}
+          <div className="relative">
             <button
               onClick={() => setIsAboutOpen((v) => !v)}
               onMouseEnter={() => setIsAboutOpen(true)}
-              className="flex items-center gap-1 text-lg font-medium text-white hover:text-opacity-80 transition-colors focus:outline-none"
+              className="flex items-center gap-1 text-lg font-medium text-white hover:text-[#E3B65B]"
             >
               About
               <ChevronDown
@@ -120,18 +121,18 @@ const Navbar = () => {
 
             {isAboutOpen && (
               <div
-                className="absolute top-full right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 animate-in fade-in slide-in-from-top-2 duration-200"
+                className="absolute top-full right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2"
                 onMouseLeave={() => setIsAboutOpen(false)}
               >
                 <Link
                   href="/about/jurilingo"
-                  className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
+                  className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
                 >
                   JuriLingo
                 </Link>
                 <Link
                   href="/about/founder"
-                  className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
+                  className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
                 >
                   Founder
                 </Link>
@@ -139,13 +140,13 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* Admin Dropdown - Only visible to admins */}
+          {/* ADMIN DROPDOWN */}
           {isAdmin && (
-            <div className="relative group">
+            <div className="relative">
               <button
                 onClick={() => setIsAdminOpen((v) => !v)}
                 onMouseEnter={() => setIsAdminOpen(true)}
-                className="flex items-center gap-1 text-lg font-medium text-white hover:text-opacity-80 transition-colors focus:outline-none"
+                className="flex items-center gap-1 text-lg font-medium text-white hover:text-[#E3B65B]"
               >
                 Admin
                 <ChevronDown
@@ -158,37 +159,21 @@ const Navbar = () => {
 
               {isAdminOpen && (
                 <div
-                  className="absolute top-full right-0 mt-2 w-52 bg-white rounded-md shadow-lg py-2 animate-in fade-in slide-in-from-top-2 duration-200"
+                  className="absolute top-full right-0 mt-2 w-52 bg-white rounded-md shadow-lg py-2"
                   onMouseLeave={() => setIsAdminOpen(false)}
                 >
-                  <Link
-                    href="/blogs/new"
-                    className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
-                  >
-                    Add Blogs
-                  </Link>
-                  <Link
-                    href="/competitions/new"
-                    className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
-                  >
-                    Add Competitions
-                  </Link>
-                  <Link
-                    href="/podcasts/new"
-                    className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
-                  >
-                    Add Podcasts
-                  </Link>
+                  <Link href="/blogs/new" className="block px-4 py-2 hover:bg-gray-100">Add Blogs</Link>
+                  <Link href="/competitions/new" className="block px-4 py-2 hover:bg-gray-100">Add Competitions</Link>
+                  <Link href="/podcasts/new" className="block px-4 py-2 hover:bg-gray-100">Add Podcasts</Link>
                 </div>
               )}
             </div>
           )}
 
-          {/* Auth Buttons */}
+          {/* AUTH BUTTONS */}
           {!loading && (
             <div className="flex items-center gap-6 ml-4">
               {user ? (
-                // Logged in - Show Logout
                 <button
                   onClick={handleLogout}
                   className="text-white text-lg font-medium hover:underline decoration-[#E3B65B] decoration-2 underline-offset-4"
@@ -196,18 +181,14 @@ const Navbar = () => {
                   Logout
                 </button>
               ) : (
-                // Not logged in - Show Login and Register
                 <>
-                  <Link
-                    href="/auth/login"
-                    className="text-white text-lg font-medium hover:underline decoration-[#E3B65B] decoration-2 underline-offset-4"
-                  >
+                  <Link href="/auth/login" className="text-white text-lg font-medium hover:underline decoration-[#E3B65B]">
                     Login
                   </Link>
 
                   <Link
                     href="/auth/register"
-                    className="px-6 py-2 rounded-md font-bold text-lg shadow-sm hover:shadow-md transform hover:-translate-y-0.5 transition-all duration-200 inline-block"
+                    className="px-6 py-2 rounded-md font-bold text-lg shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
                     style={{ backgroundColor: colors.gold, color: colors.teal }}
                   >
                     Register
@@ -218,7 +199,7 @@ const Navbar = () => {
           )}
         </div>
 
-        {/* --- MOBILE BURGER MENU --- */}
+        {/* MOBILE MENU BUTTON */}
         <div className="md:hidden">
           <button
             onClick={() => setIsMobileMenuOpen((v) => !v)}
@@ -229,107 +210,58 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* --- MOBILE DROPDOWN --- */}
+      {/* MOBILE DROPDOWN */}
       {isMobileMenuOpen && (
-        <div className="md:hidden pt-4 pb-6 border-t border-[#ffffff20] mt-2 space-y-4 animate-in slide-in-from-top-5">
+        <div className="md:hidden pt-4 pb-6 border-t border-white/20 mt-2 space-y-4">
           {navLinks.map((link) => (
             <Link
               key={link.name}
               href={link.href}
-              className="block w-full text-left px-2 text-white text-lg font-medium hover:text-[#E3B65B]"
+              className="block px-2 text-white text-lg hover:text-[#E3B65B]"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               {link.name}
             </Link>
           ))}
 
-          {/* About (mobile) */}
-          <div className="px-2 text-white text-lg font-medium">
-            <span className="opacity-75 text-sm uppercase tracking-wider mb-2 block">
-              About
-            </span>
-            <div className="pl-4 border-l-2 border-[#E3B65B] space-y-2">
-              <Link
-                href="/about/jurilingo"
-                className="block w-full text-left text-base py-1 hover:text-[#E3B65B]"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                JuriLingo
-              </Link>
-              <Link
-                href="/about/founder"
-                className="block w-full text-left text-base py-1 hover:text-[#E3B65B]"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Founder
-              </Link>
+          {/* About */}
+          <div className="px-2">
+            <span className="text-sm uppercase tracking-wider text-white/70">About</span>
+            <div className="pl-4 border-l-2 border-[#E3B65B] mt-2 space-y-2">
+              <Link href="/about/jurilingo" className="block py-1 text-white hover:text-[#E3B65B]" onClick={() => setIsMobileMenuOpen(false)}>JuriLingo</Link>
+              <Link href="/about/founder" className="block py-1 text-white hover:text-[#E3B65B]" onClick={() => setIsMobileMenuOpen(false)}>Founder</Link>
             </div>
           </div>
 
-          {/* Admin (mobile) - Only visible to admins */}
+          {/* Admin */}
           {isAdmin && (
-            <div className="px-2 text-white text-lg font-medium">
-              <span className="opacity-75 text-sm uppercase tracking-wider mb-2 block">
-                Admin
-              </span>
-              <div className="pl-4 border-l-2 border-[#E3B65B] space-y-2">
-                <Link
-                  href="/blogs/new"
-                  className="block w-full text-left text-base py-1 hover:text-[#E3B65B]"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Add Blogs
-                </Link>
-                <Link
-                  href="/competitions/new"
-                  className="block w-full text-left text-base py-1 hover:text-[#E3B65B]"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Add Competitions
-                </Link>
-                <Link
-                  href="/podcasts/new"
-                  className="block w-full text-left text-base py-1 hover:text-[#E3B65B]"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Add Podcasts
-                </Link>
+            <div className="px-2">
+              <span className="text-sm uppercase tracking-wider text-white/70">Admin</span>
+              <div className="pl-4 border-l-2 border-[#E3B65B] mt-2 space-y-2">
+                <Link href="/blogs/new" className="block py-1 text-white hover:text-[#E3B65B]" onClick={() => setIsMobileMenuOpen(false)}>Add Blogs</Link>
+                <Link href="/competitions/new" className="block py-1 text-white hover:text-[#E3B65B]" onClick={() => setIsMobileMenuOpen(false)}>Add Competitions</Link>
+                <Link href="/podcasts/new" className="block py-1 text-white hover:text-[#E3B65B]" onClick={() => setIsMobileMenuOpen(false)}>Add Podcasts</Link>
               </div>
             </div>
           )}
 
-          {/* Auth (mobile) */}
+          {/* Auth */}
           {!loading && (
             <div className="pt-4 flex flex-col gap-3 px-2">
               {user ? (
-                // Logged in - Show Logout
                 <button
                   onClick={() => {
                     handleLogout();
                     setIsMobileMenuOpen(false);
                   }}
-                  className="w-full py-2 text-white border border-white rounded text-center hover:bg-white/10"
+                  className="py-2 text-white border border-white rounded"
                 >
                   Logout
                 </button>
               ) : (
-                // Not logged in - Show Login and Register
                 <>
-                  <Link
-                    href="/auth/login"
-                    className="w-full py-2 text-white border border-white rounded text-center hover:bg-white/10"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Login
-                  </Link>
-                  <Link
-                    href="/auth/register"
-                    className="w-full py-2 font-bold rounded text-center"
-                    style={{ backgroundColor: colors.gold, color: colors.teal }}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Register
-                  </Link>
+                  <Link href="/auth/login" className="py-2 text-white border border-white rounded text-center hover:bg-white/10" onClick={() => setIsMobileMenuOpen(false)}>Login</Link>
+                  <Link href="/auth/register" className="py-2 font-bold text-center rounded" style={{ backgroundColor: colors.gold, color: colors.teal }} onClick={() => setIsMobileMenuOpen(false)}>Register</Link>
                 </>
               )}
             </div>
