@@ -14,6 +14,10 @@ const BlogSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Please provide content'],
   },
+  publishDate: {
+    type: Date,
+    default: Date.now,
+  },
   createdAt: {
     type: Date,
     default: Date.now,

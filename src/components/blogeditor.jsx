@@ -14,11 +14,13 @@ import {
   Undo,
   Redo,
   Save,
+  Calendar,
 } from "lucide-react";
 
 const BlogEditor = () => {
   const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");      // NEW: author field
+  const [author, setAuthor] = useState("");
+  const [publishDate, setPublishDate] = useState(""); // NEW: publish date field
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const editor = useEditor(
@@ -48,16 +50,23 @@ const BlogEditor = () => {
 
     setIsSubmitting(true);
     try {
+      const payload = {
+        title,
+        author,
+        content,
+      };
+
+      // Add publishDate only if provided
+      if (publishDate) {
+        payload.publishDate = publishDate;
+      }
+
       const res = await fetch("/api/blog", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          title,
-          author,
-          content,
-        }),
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json().catch(() => null);
@@ -69,9 +78,10 @@ const BlogEditor = () => {
 
       alert(data?.message || "Blog created successfully");
 
-      // Optionally reset form
+      // Reset form
       setTitle("");
       setAuthor("");
+      setPublishDate("");
       editor.commands.setContent("<p>Start sharing your legal insights...</p>");
     } catch (err) {
       console.error("Error creating blog:", err);
@@ -141,7 +151,7 @@ const BlogEditor = () => {
               className="w-full text-3xl font-bold text-gray-800 placeholder-gray-300 border-b-2 border-transparent hover:border-gray-100 focus:border-[#E3B65B] focus:outline-none transition-colors py-2"
             />
 
-            {/* NEW: Author Input */}
+            {/* Author Input */}
             <input
               type="text"
               placeholder="Author name..."
@@ -149,6 +159,30 @@ const BlogEditor = () => {
               onChange={(e) => setAuthor(e.target.value)}
               className="w-full text-base text-gray-800 placeholder-gray-300 border-b border-gray-200 focus:border-[#E3B65B] focus:outline-none transition-colors py-2"
             />
+
+            {/* NEW: Publish Date Input */}
+            <div className="flex items-center gap-2 border-b border-gray-200 focus-within:border-[#E3B65B] transition-colors py-2">
+              <Calendar size={18} className="text-gray-400" />
+              <input
+                type="date"
+                value={publishDate}
+                onChange={(e) => setPublishDate(e.target.value)}
+                className="flex-1 text-base text-gray-800 placeholder-gray-300 focus:outline-none"
+                placeholder="Publish date (optional)"
+              />
+              {publishDate && (
+                <button
+                  onClick={() => setPublishDate("")}
+                  className="text-xs text-gray-400 hover:text-gray-600"
+                  type="button"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
+            <p className="text-xs text-gray-500 -mt-2">
+              Leave empty to use current date and time
+            </p>
           </div>
 
           {/* Toolbar */}

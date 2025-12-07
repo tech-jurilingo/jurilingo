@@ -14,14 +14,14 @@ export async function POST(request) {
       return authResult; // Return auth error
     }
 
-    //Verify admin role
+    // Verify admin role
     const adminCheck = verifyAdmin(authResult);
     if (adminCheck) {
       return adminCheck; // Return forbidden error
     }
 
     const body = await request.json();
-    const { title, author, content } = body;
+    const { title, author, content, publishDate } = body;
 
     if (!title || !author || !content) {
       return NextResponse.json(
@@ -35,11 +35,18 @@ export async function POST(request) {
 
     await dbConnect();
 
-    const blog = await Blog.create({
+    const blogData = {
       title,
       author,
       content,
-    });
+    };
+
+    // Add publishDate if provided, otherwise it will use default (Date.now)
+    if (publishDate) {
+      blogData.publishDate = new Date(publishDate);
+    }
+
+    const blog = await Blog.create(blogData);
 
     return NextResponse.json(
       {
@@ -66,7 +73,8 @@ export async function GET(request) {
   try {
     await dbConnect();
 
-    const blogs = await Blog.find().sort({ createdAt: -1 });
+    // Sort by publishDate instead of createdAt for display
+    const blogs = await Blog.find().sort({ publishDate: -1 });
 
     return NextResponse.json({
       success: true,
