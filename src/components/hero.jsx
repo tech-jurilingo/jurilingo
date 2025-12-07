@@ -39,8 +39,8 @@ const Hero = () => {
           </h1>
 
           <p className="text-lg md:text-xl text-white/90 mb-10 leading-relaxed font-light">
-            Connect with prestigious competitions, talented judges, and
-            passionate competitors in one comprehensive platform.
+            Learn the law. Speak the law. Live the law.
+            Because understanding the law should feel human, not intimidating.
           </p>
 
           {/* Buttons - Only show if user is not logged in */}

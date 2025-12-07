@@ -161,15 +161,6 @@ const Footer = () => {
                   jurilingo@outlook.com
                 </a>
               </li>
-              <li className="flex items-center gap-3">
-                <Phone size={18} style={{ color: colors.gold }} />
-                <a
-                  href="tel:+916364300400"
-                  className="text-white/90 hover:text-white"
-                >
-                  +91 6364300400
-                </a>
-              </li>
             </ul>
           </div>
         </div>
