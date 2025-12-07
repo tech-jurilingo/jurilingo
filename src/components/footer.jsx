@@ -58,7 +58,7 @@ const Footer = () => {
                 href="#"
                 className="bg-white/10 p-2 rounded-full hover:bg-white/20 transition-colors text-white"
               >
-                Linkdin
+                Linkedin
               </Link>
             </div>
           </div>

@@ -30,7 +30,7 @@ const Hero = () => {
               className="px-8 py-3 rounded-md font-bold text-lg shadow-sm hover:bg-gray-100 transition-colors duration-200"
               style={{ backgroundColor: "white", color: colors.teal }}
             >
-              Browse Moots
+              Browse Competitions
             </Link>
 
             {/* Join JuriLingo Button */}

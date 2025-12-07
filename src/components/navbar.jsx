@@ -162,22 +162,22 @@ const Navbar = () => {
                   onMouseLeave={() => setIsAdminOpen(false)}
                 >
                   <Link
-                    href="/admin/blogs"
+                    href="/blogs/new"
                     className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
                   >
-                    Manage Blogs
+                    Add Blogs
                   </Link>
                   <Link
-                    href="/admin/competitions"
+                    href="/competitions/new"
                     className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
                   >
-                    Manage Competitions
+                    Add Competitions
                   </Link>
                   <Link
-                    href="/admin/podcasts"
+                    href="/podcasts/new"
                     className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
                   >
-                    Manage Podcasts
+                    Add Podcasts
                   </Link>
                 </div>
               )}
@@ -274,25 +274,25 @@ const Navbar = () => {
               </span>
               <div className="pl-4 border-l-2 border-[#E3B65B] space-y-2">
                 <Link
-                  href="/admin/blogs"
+                  href="/blogs/new"
                   className="block w-full text-left text-base py-1 hover:text-[#E3B65B]"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  Manage Blogs
+                  Add Blogs
                 </Link>
                 <Link
-                  href="/admin/competitions"
+                  href="/competitions/new"
                   className="block w-full text-left text-base py-1 hover:text-[#E3B65B]"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  Manage Competitions
+                  Add Competitions
                 </Link>
                 <Link
-                  href="/admin/podcasts"
+                  href="/podcasts/new"
                   className="block w-full text-left text-base py-1 hover:text-[#E3B65B]"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  Manage Podcasts
+                  Add Podcasts
                 </Link>
               </div>
             </div>
