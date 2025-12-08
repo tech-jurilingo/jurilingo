@@ -39,7 +39,6 @@ const Hero = () => {
           </h1>
 
           <p className="text-lg md:text-xl text-white/90 mb-10 leading-relaxed font-light">
-            Learn the law. Speak the law. Live the law.
             Because understanding the law should feel human, not intimidating.
           </p>
 
