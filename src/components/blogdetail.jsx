@@ -115,7 +115,7 @@ const BlogDetail = () => {
           </div>
           <div className="text-gray-500 text-sm flex items-center">
             <Calendar size={16} className="mr-2 text-[#E3B65B]" />
-            {new Date(blog.createdAt).toLocaleDateString('en-IN', {
+            {new Date(blog.publishDate).toLocaleDateString('en-IN', {
               year: 'numeric',
               month: 'long',
               day: 'numeric',

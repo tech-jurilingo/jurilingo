@@ -1,7 +1,5 @@
 import "./globals.css";
 import { AppProviders } from "./providers";
-import Navbar from "@/components/navbar";
-import Footer from "@/components/footer";
 
 export const metadata = {
   title: "Jurilingo",

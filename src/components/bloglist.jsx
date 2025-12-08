@@ -146,7 +146,7 @@ const BlogsList = () => {
                 <div className="p-6 grow">
                   <div className="flex items-center text-xs text-[#E3B65B] font-bold uppercase tracking-wider mb-3">
                     <Calendar size={14} className="mr-1" />
-                    {new Date(blog.createdAt).toLocaleDateString('en-IN', {
+                    {new Date(blog.publishDate).toLocaleDateString('en-IN', {
                       year: 'numeric',
                       month: 'short',
                       day: 'numeric',
