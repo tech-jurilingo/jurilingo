@@ -47,7 +47,7 @@ const Hero = () => {
             <div className="flex flex-col sm:flex-row gap-4">
               {/* Join JuriLingo Button */}
               <Link
-                href="/register"
+                href="/auth/register"
                 className="px-8 py-3 rounded-md font-bold text-lg shadow-sm hover:shadow-md hover:brightness-105 transition-all duration-200"
                 style={{ backgroundColor: colors.gold, color: colors.teal }}
               >

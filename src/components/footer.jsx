@@ -3,10 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import {
-  Mail,
-  Phone,
-} from "lucide-react";
+import { Mail, Instagram, Linkedin, Youtube } from "lucide-react";
 
 const Footer = () => {
   const colors = {
@@ -22,139 +19,91 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         {/* Top Grid Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+          
           {/* Column 1: Brand Info */}
           <div className="flex flex-col gap-6">
             <div className="flex items-center gap-3">
-              <div className="relative">
-                <Image
-                  src="/logonav.png"
-                  alt="JuriLingo Logo"
-                  width={50}
-                  height={50}
-                  className="transform group-hover:scale-110 transition-transform duration-300"
-                />
-              </div>
+              <Image
+                src="/logonav.png"
+                alt="JuriLingo Logo"
+                width={50}
+                height={50}
+                className="transform group-hover:scale-110 transition-transform duration-300"
+              />
               <span className="text-2xl font-bold font-sans">JuriLingo</span>
             </div>
+
             <p className="text-white/80 leading-relaxed text-sm">
-               Learn the law. Speak the law. Live the law
+              Learn the law. Speak the law. Live the law
             </p>
+
+            {/* Social Icons */}
             <div className="flex gap-4 mt-2">
-              {/* Replace href values with your actual socials */}
+
+              {/* LinkedIn */}
               <Link
-                href="#"
-                className="bg-white/10 p-2 rounded-full hover:bg-white/20 transition-colors text-white"
+                href="https://www.linkedin.com/company/jurilingo"
+                target="_blank"
+                className="bg-white/10 p-2 rounded-full hover:bg-white/20 transition-colors"
               >
-                Instagram
+                <Linkedin size={20} />
               </Link>
+
+              {/* Instagram */}
               <Link
-                href="#"
-                className="bg-white/10 p-2 rounded-full hover:bg-white/20 transition-colors text-white"
+                href="https://www.instagram.com/_jurilingo?igsh=MWJmZzg4cGk1YXhqbw%3D%3D&utm_source=qr"
+                target="_blank"
+                className="bg-white/10 p-2 rounded-full hover:bg-white/20 transition-colors"
               >
-                Youtube
+                <Instagram size={20} />
               </Link>
+
+              {/* YouTube */}
               <Link
-                href="#"
-                className="bg-white/10 p-2 rounded-full hover:bg-white/20 transition-colors text-white"
+                href="https://www.youtube.com/channel/UCgpP_XfUh875UNQLcHtFUYA"
+                target="_blank"
+                className="bg-white/10 p-2 rounded-full hover:bg-white/20 transition-colors"
               >
-                Linkedin
+                <Youtube size={20} />
               </Link>
             </div>
           </div>
 
           {/* Column 2: Quick Links */}
           <div>
-            <h3
-              className="text-lg font-bold mb-6"
-              style={{ color: colors.gold }}
-            >
+            <h3 className="text-lg font-bold mb-6" style={{ color: colors.gold }}>
               Quick Links
             </h3>
             <ul className="space-y-4 text-sm">
-              <li>
-                <Link
-                  href="/"
-                  className="text-white/80 hover:text-white transition-colors"
-                >
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/competitions"
-                  className="text-white/80 hover:text-white transition-colors"
-                >
-                  Competitions
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/about/jurilingo"
-                  className="text-white/80 hover:text-white transition-colors"
-                >
-                  About JuriLingo
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/about/founder"
-                  className="text-white/80 hover:text-white transition-colors"
-                >
-                  Meet the Founder
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/auth/register"
-                  className="text-white/80 hover:text-white transition-colors"
-                >
-                  Register
-                </Link>
-              </li>
+              <li><Link href="/" className="text-white/80 hover:text-white transition-colors">Home</Link></li>
+              <li><Link href="/competitions" className="text-white/80 hover:text-white transition-colors">Competitions</Link></li>
+              <li><Link href="/about/jurilingo" className="text-white/80 hover:text-white transition-colors">About JuriLingo</Link></li>
+              <li><Link href="/about/founder" className="text-white/80 hover:text-white transition-colors">Meet the Founder</Link></li>
+              <li><Link href="/auth/register" className="text-white/80 hover:text-white transition-colors">Register</Link></li>
             </ul>
           </div>
 
           {/* Column 3: Resources */}
           <div>
-            <h3
-              className="text-lg font-bold mb-6"
-              style={{ color: colors.gold }}
-            >
+            <h3 className="text-lg font-bold mb-6" style={{ color: colors.gold }}>
               Resources
             </h3>
             <ul className="space-y-4 text-sm">
-              <li>
-                <Link
-                  href="/blogs"
-                  className="text-white/80 hover:text-white transition-colors"
-                >
-                  Blogs
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/podcasts"
-                  className="text-white/80 hover:text-white transition-colors"
-                >
-                  Podcasts
-                </Link>
-              </li>
+              <li><Link href="/blogs" className="text-white/80 hover:text-white transition-colors">Blogs</Link></li>
+              <li><Link href="/podcasts" className="text-white/80 hover:text-white transition-colors">Podcasts</Link></li>
             </ul>
           </div>
 
           {/* Column 4: Contact Us */}
           <div>
-            <h3
-              className="text-lg font-bold mb-6"
-              style={{ color: colors.gold }}
-            >
+            <h3 className="text-lg font-bold mb-6" style={{ color: colors.gold }}>
               Contact Us
             </h3>
             <ul className="space-y-6 text-sm">
               <li className="flex items-center gap-3">
                 <Mail size={18} style={{ color: colors.gold }} />
                 <a
-                  href="mailto:jurilingo.outlook.com"
+                  href="mailto:jurilingo@outlook.com"
                   className="text-white/90 hover:text-white"
                 >
                   jurilingo@outlook.com
