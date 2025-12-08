@@ -37,8 +37,7 @@ const Footer = () => {
               <span className="text-2xl font-bold font-sans">JuriLingo</span>
             </div>
             <p className="text-white/80 leading-relaxed text-sm">
-              Connecting moot court competitors, judges, and organizers in one
-              comprehensive platform.
+               Learn the law. Speak the law. Live the law
             </p>
             <div className="flex gap-4 mt-2">
               {/* Replace href values with your actual socials */}
