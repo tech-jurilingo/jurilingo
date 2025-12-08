@@ -69,7 +69,7 @@ const Navbar = () => {
 
         {/* LOGO SECTION — DO NOT CHANGE HEIGHT BASED ON LOGO SIZE */}
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="relative h-20 w-20 md:h-18 md:w-18">
+          <div className="relative h-16 w-16 md:h-14 md:w-14">
             <Image
               src="/logonav.png"
               alt="JuriLingo Logo"
