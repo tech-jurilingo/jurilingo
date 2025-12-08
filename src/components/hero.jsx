@@ -35,7 +35,7 @@ const Hero = () => {
       <div className="max-w-7xl mx-auto px-4 md:px-8 py-20 md:py-16">
         <div className="max-w-3xl">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-6 tracking-tight">
-            The Premier Marketplace for Moot Court Competitions
+            Learn the law. Speak the law. Live the law
           </h1>
 
           <p className="text-lg md:text-xl text-white/90 mb-10 leading-relaxed font-light">
