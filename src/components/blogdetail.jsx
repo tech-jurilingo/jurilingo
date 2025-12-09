@@ -110,7 +110,6 @@ const BlogDetail = () => {
             </div>
             <div>
               <p className="font-bold text-gray-900 text-sm">{blog.author}</p>
-              <p className="text-gray-500 text-xs">Legal Expert</p>
             </div>
           </div>
           <div className="text-gray-500 text-sm flex items-center">

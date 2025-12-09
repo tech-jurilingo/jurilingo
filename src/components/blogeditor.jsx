@@ -5,38 +5,72 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import TextAlign from "@tiptap/extension-text-align";
+import { TextStyle, FontSize } from "@tiptap/extension-text-style";
+import BulletList from "@tiptap/extension-bullet-list";
+import OrderedList from "@tiptap/extension-ordered-list";
+import ListItem from "@tiptap/extension-list-item";
 import {
   Bold,
   Italic,
   Heading as HeadingIcon,
   List,
+  ListOrdered,
   Quote,
   Undo,
   Redo,
   Save,
   Calendar,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  AlignJustify,
 } from "lucide-react";
 
 const BlogEditor = () => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
-  const [publishDate, setPublishDate] = useState(""); // NEW: publish date field
+  const [publishDate, setPublishDate] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const editor = useEditor(
-    {
-      extensions: [StarterKit],
-      content: "<p>Start sharing your legal insights...</p>",
-      editorProps: {
-        attributes: {
-          class:
-            "prose prose-lg focus:outline-none min-h-[300px] max-w-none text-gray-700 leading-relaxed",
+  const fontSizeOptions = [
+    { label: "Small", value: "14px" },
+    { label: "Normal", value: "16px" },
+    { label: "Large", value: "18px" },
+    { label: "X-Large", value: "20px" },
+  ];
+
+  const editor = useEditor({
+    extensions: [
+      StarterKit.configure({
+        heading: {
+          levels: [1, 2, 3],
         },
+        // we provide our own list extensions below
+        bulletList: false,
+        orderedList: false,
+        listItem: false,
+      }),
+      BulletList,
+      OrderedList,
+      ListItem,
+      TextStyle,
+      FontSize.configure({
+        types: ["textStyle"],
+      }),
+      TextAlign.configure({
+        types: ["heading", "paragraph"],
+      }),
+    ],
+    content: "<p>Start sharing your legal insights...</p>",
+    editorProps: {
+      attributes: {
+        class:
+          "prose prose-lg focus:outline-none min-h-[300px] max-w-none text-gray-700 leading-relaxed",
       },
-      immediatelyRender: false,
     },
-    []
-  );
+    immediatelyRender: false,
+  });
 
   const handleSubmit = async () => {
     if (!title || !author) {
@@ -56,7 +90,6 @@ const BlogEditor = () => {
         content,
       };
 
-      // Add publishDate only if provided
       if (publishDate) {
         payload.publishDate = publishDate;
       }
@@ -78,7 +111,6 @@ const BlogEditor = () => {
 
       alert(data?.message || "Blog created successfully");
 
-      // Reset form
       setTitle("");
       setAuthor("");
       setPublishDate("");
@@ -97,7 +129,7 @@ const BlogEditor = () => {
     bg: "#F5F5F0",
   };
 
-  const ToolbarButton = ({ onClick, isActive, icon: Icon, label }) => (
+  const ToolbarButton = ({ onClick, isActive, icon: Icon, label, disabled }) => (
     <button
       onClick={onClick}
       className={`p-2 rounded hover:bg-gray-200 transition-colors ${
@@ -105,11 +137,49 @@ const BlogEditor = () => {
       }`}
       title={label}
       type="button"
-      disabled={!editor}
+      disabled={disabled}
     >
       <Icon size={18} />
     </button>
   );
+
+  const setFontSize = (size) => {
+    if (!editor) return;
+
+    const hasSetFontSize =
+      editor.commands && typeof editor.commands.setFontSize === "function";
+    const hasUnsetFontSize =
+      editor.commands && typeof editor.commands.unsetFontSize === "function";
+
+    if (!hasSetFontSize || !hasUnsetFontSize) {
+      console.warn(
+        "[Tiptap] FontSize commands not available. Check @tiptap/extension-text-style version."
+      );
+      return;
+    }
+
+    if (!size) {
+      editor.chain().focus().unsetFontSize().run();
+    } else {
+      editor.chain().focus().setFontSize(size).run();
+    }
+  };
+
+  const setAlign = (alignment) => {
+    if (!editor) return;
+
+    const hasSetTextAlign =
+      editor.commands && typeof editor.commands.setTextAlign === "function";
+
+    if (!hasSetTextAlign) {
+      console.warn(
+        "[Tiptap] setTextAlign command not available. Check @tiptap/extension-text-align version."
+      );
+      return;
+    }
+
+    editor.chain().focus().setTextAlign(alignment).run();
+  };
 
   return (
     <div
@@ -141,7 +211,7 @@ const BlogEditor = () => {
 
         {/* Editor Container */}
         <div className="p-8 space-y-6">
-          {/* Title Input */}
+          {/* Title & Meta */}
           <div className="space-y-4">
             <input
               type="text"
@@ -151,7 +221,6 @@ const BlogEditor = () => {
               className="w-full text-3xl font-bold text-gray-800 placeholder-gray-300 border-b-2 border-transparent hover:border-gray-100 focus:border-[#E3B65B] focus:outline-none transition-colors py-2"
             />
 
-            {/* Author Input */}
             <input
               type="text"
               placeholder="Author name..."
@@ -160,7 +229,7 @@ const BlogEditor = () => {
               className="w-full text-base text-gray-800 placeholder-gray-300 border-b border-gray-200 focus:border-[#E3B65B] focus:outline-none transition-colors py-2"
             />
 
-            {/* NEW: Publish Date Input */}
+            {/* Publish Date */}
             <div className="flex items-center gap-2 border-b border-gray-200 focus-within:border-[#E3B65B] transition-colors py-2">
               <Calendar size={18} className="text-gray-400" />
               <input
@@ -187,49 +256,135 @@ const BlogEditor = () => {
 
           {/* Toolbar */}
           <div className="flex flex-wrap gap-1 border border-gray-200 rounded-lg p-2 bg-gray-50 sticky top-0 z-10">
+            {/* Basic text styles */}
             <ToolbarButton
-              onClick={() => editor?.chain().focus().toggleBold().run()}
-              isActive={editor?.isActive("bold")}
+              onClick={() => editor && editor.chain().focus().toggleBold().run()}
+              isActive={editor && editor.isActive("bold")}
               icon={Bold}
               label="Bold"
+              disabled={!editor}
             />
-            <ToolbarButton
-              onClick={() => editor?.chain().focus().toggleItalic().run()}
-              isActive={editor?.isActive("italic")}
-              icon={Italic}
-              label="Italic"
-            />
-            <div className="w-px h-6 bg-gray-300 mx-1 self-center" />
             <ToolbarButton
               onClick={() =>
-                editor?.chain().focus().toggleHeading({ level: 2 }).run()
+                editor && editor.chain().focus().toggleItalic().run()
               }
-              isActive={editor?.isActive("heading", { level: 2 })}
-              icon={HeadingIcon}
-              label="Heading"
+              isActive={editor && editor.isActive("italic")}
+              icon={Italic}
+              label="Italic"
+              disabled={!editor}
             />
+
+            <div className="w-px h-6 bg-gray-300 mx-1 self-center" />
+
+            {/* Heading
             <ToolbarButton
-              onClick={() => editor?.chain().focus().toggleBulletList().run()}
-              isActive={editor?.isActive("bulletList")}
+              onClick={() =>
+                editor &&
+                editor.chain().focus().toggleHeading({ level: 2 }).run()
+              }
+              isActive={editor && editor.isActive("heading", { level: 2 })}
+              icon={HeadingIcon}
+              label="Heading (H2)"
+              disabled={!editor}
+            /> */}
+
+            {/* Bullet List
+            <ToolbarButton
+              onClick={() =>
+                editor && editor.chain().focus().toggleBulletList().run()
+              }
+              isActive={editor && editor.isActive("bulletList")}
               icon={List}
               label="Bullet List"
-            />
+              disabled={!editor}
+            /> */}
+
+            {/* Numbered List
             <ToolbarButton
-              onClick={() => editor?.chain().focus().toggleBlockquote().run()}
-              isActive={editor?.isActive("blockquote")}
+              onClick={() =>
+                editor && editor.chain().focus().toggleOrderedList().run()
+              }
+              isActive={editor && editor.isActive("orderedList")}
+              icon={ListOrdered}
+              label="Numbered List"
+              disabled={!editor}
+            /> */}
+
+            {/* Blockquote
+            <ToolbarButton
+              onClick={() =>
+                editor && editor.chain().focus().toggleBlockquote().run()
+              }
+              isActive={editor && editor.isActive("blockquote")}
               icon={Quote}
               label="Quote"
-            />
-            <div className="w-px h-6 bg-gray-300 mx-1 self-center" />
+              disabled={!editor}
+            /> */}
+
+
+            {/* Alignment */}
             <ToolbarButton
-              onClick={() => editor?.chain().focus().undo().run()}
+              onClick={() => setAlign("left")}
+              isActive={editor && editor.isActive({ textAlign: "left" })}
+              icon={AlignLeft}
+              label="Align Left"
+              disabled={!editor}
+            />
+            <ToolbarButton
+              onClick={() => setAlign("center")}
+              isActive={editor && editor.isActive({ textAlign: "center" })}
+              icon={AlignCenter}
+              label="Align Center"
+              disabled={!editor}
+            />
+            <ToolbarButton
+              onClick={() => setAlign("right")}
+              isActive={editor && editor.isActive({ textAlign: "right" })}
+              icon={AlignRight}
+              label="Align Right"
+              disabled={!editor}
+            />
+            <ToolbarButton
+              onClick={() => setAlign("justify")}
+              isActive={editor && editor.isActive({ textAlign: "justify" })}
+              icon={AlignJustify}
+              label="Justify"
+              disabled={!editor}
+            />
+
+            <div className="w-px h-6 bg-gray-300 mx-1 self-center" />
+
+            {/* Font size selector */}
+            <div className="flex items-center gap-1 ml-1">
+              <select
+                className="text-xs border border-gray-300 rounded px-2 py-1 bg-white text-gray-700"
+                onChange={(e) => setFontSize(e.target.value)}
+                defaultValue=""
+                disabled={!editor}
+              >
+                <option value="">Font size</option>
+                {fontSizeOptions.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="w-px h-6 bg-gray-300 mx-1 self-center" />
+
+            {/* Undo / Redo */}
+            <ToolbarButton
+              onClick={() => editor && editor.chain().focus().undo().run()}
               icon={Undo}
               label="Undo"
+              disabled={!editor || !editor.can().undo()}
             />
             <ToolbarButton
-              onClick={() => editor?.chain().focus().redo().run()}
+              onClick={() => editor && editor.chain().focus().redo().run()}
               icon={Redo}
               label="Redo"
+              disabled={!editor || !editor.can().redo()}
             />
           </div>
 

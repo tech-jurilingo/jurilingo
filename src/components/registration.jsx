@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { Scale } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const Registration = () => {
   const [formData, setFormData] = useState({
@@ -76,9 +76,14 @@ const Registration = () => {
       className="min-h-screen w-full flex flex-col items-center justify-center py-12 px-4"
       style={{ backgroundColor: colors.bg }}
     >
-      {/* Icon Header */}
-      <div className="mb-6">
-        <Scale size={48} style={{ color: colors.gold }} />
+      <div>
+        <Image
+          src="/logo3.png"
+          alt="JuriLingo Logo"
+          width={120}
+          height={120}
+          className="transform group-hover:scale-110 transition-transform duration-300"
+        />
       </div>
 
       <div className="text-center mb-8">
