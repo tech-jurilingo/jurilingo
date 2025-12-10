@@ -18,7 +18,7 @@ export async function POST(request, { params }) {
       return adminCheck;
     }
 
-    const { competitionId } = await params;
+    const { id: competitionId } = await params;
     const body = await request.json();
     const { waitlistItemId } = body;
 

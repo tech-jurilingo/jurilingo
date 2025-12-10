@@ -60,7 +60,7 @@ const CompetitionDetail = () => {
     console.log('Waitlist Item ID:', waitlistItemId);
     setProcessingUserId(userId);
     try {
-      const response = await fetch(`/api/competition/${competitionId}/approve`, {
+      const response = await fetch(`/api/competition/by-id/${competitionId}/approve`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -87,7 +87,7 @@ const CompetitionDetail = () => {
   const handleReject = async (waitlistItemId, userId) => {
     setProcessingUserId(userId);
     try {
-      const response = await fetch(`/api/competition/${competitionId}/reject`, {
+      const response = await fetch(`/api/competition/by-id/${competitionId}/reject`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
