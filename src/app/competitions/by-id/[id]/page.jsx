@@ -35,6 +35,7 @@ const CompetitionDetail = () => {
         }
 
         const data = await response.json();
+        console.log('Fetched competition data:', data);
         
         if (data.success) {
           setCompetition(data.competition);
@@ -55,6 +56,8 @@ const CompetitionDetail = () => {
   }, [competitionId]);
 
   const handleApprove = async (waitlistItemId, userId) => {
+    console.log('Approving user:', userId);
+    console.log('Waitlist Item ID:', waitlistItemId);
     setProcessingUserId(userId);
     try {
       const response = await fetch(`/api/competition/${competitionId}/approve`, {
@@ -239,7 +242,7 @@ const CompetitionDetail = () => {
         </div>
 
         {/* Payment QR Code */}
-        {competition.paymentQrImageUrl && (
+        {competition && (
           <div className="bg-white rounded-xl p-8 mb-8 border border-gray-200 text-center">
             <h2 className="text-2xl font-bold text-[#002B36] mb-4">Payment QR Code</h2>
             <p className="text-gray-600 mb-6">
@@ -248,7 +251,7 @@ const CompetitionDetail = () => {
             <div className="flex justify-center">
               <div className="relative w-64 h-64 border-2 border-gray-200 rounded-lg overflow-hidden">
                 <Image
-                  src={competition.paymentQrImageUrl}
+                  src="/qr.png"
                   alt="Payment QR Code"
                   fill
                   className="object-contain"
@@ -259,7 +262,7 @@ const CompetitionDetail = () => {
         )}
 
         {/* Waitlist - Admin Only */}
-        {isAdmin && competition.waitlist && competition.waitlist.length > 0 && (
+        {isAdmin && (
           <div className="bg-yellow-50 rounded-xl p-8 mb-8 border border-yellow-200">
             <h2 className="text-2xl font-bold text-[#002B36] mb-6 flex items-center gap-2">
               <Clock size={24} className="text-[#E3B65B]" />
@@ -312,7 +315,8 @@ const CompetitionDetail = () => {
         )}
 
         {/* Participants List */}
-        <div className="bg-white rounded-xl p-8 border border-gray-200">
+        {isAdmin && (
+          <div className="bg-white rounded-xl p-8 border border-gray-200">
           <h2 className="text-2xl font-bold text-[#002B36] mb-6 flex items-center gap-2">
             <Users size={24} className="text-[#E3B65B]" />
             Registered Participants ({competition.participants?.length || 0})
@@ -341,7 +345,7 @@ const CompetitionDetail = () => {
               No participants registered yet.
             </p>
           )}
-        </div>
+        </div>)}
       </div>
     </div>
   );

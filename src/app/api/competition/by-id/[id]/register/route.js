@@ -20,7 +20,7 @@ export async function POST(request, { params }) {
       return competitorCheck; // Return forbidden error
     }
 
-    const { competitionId } = await params;
+    const { id: competitionId } = await params;
     const body = await request.json();
     const { userId } = body;
 

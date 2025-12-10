@@ -5,11 +5,6 @@ import { Calendar, Clock, Users, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-/*
-───────────────────────────────────────────────────────────────
- FULL ORIGINAL COMPONENT — COMPLETELY COMMENTED OUT
-───────────────────────────────────────────────────────────────
-
 const CompetitionsList = () => {
   const [competitions, setCompetitions] = useState([]);
   const [user, setUser] = useState(null);
@@ -78,10 +73,10 @@ const CompetitionsList = () => {
     }
 
     const isInWaitlist = competition.waitlist?.some(
-      (item) => item.user === user.userId
+      (item) => item._id === user.userId
     );
     const isParticipant = competition.participants?.some(
-      (p) => p === user.userId || p._id === user.userId
+      (p) => p === user._id || p._id === user.userId
     );
 
     if (isInWaitlist) {
@@ -110,7 +105,7 @@ const CompetitionsList = () => {
       if (data.success) {
         alert("Registration successful! Your application is pending admin approval.");
 
-        const res = await fetch("/api/competition/status/all/list");
+        const res = await fetch("/api/competition/status/active");
         const updatedData = await res.json();
         if (updatedData.success) {
           setCompetitions(updatedData.competitions || []);
@@ -312,24 +307,6 @@ const CompetitionsList = () => {
           </div>
         )}
       </div>
-    </div>
-  );
-};
-
-───────────────────────────────────────────────────────────────
- END ORIGINAL COMPONENT
-───────────────────────────────────────────────────────────────
-*/
-
-const CompetitionsList = () => {
-  return (
-    <div className="w-full py-24 bg-white text-center">
-      <h2 className="text-3xl font-bold text-[#005F63] mb-4">
-        Competitions
-      </h2>
-      <p className="text-gray-600 text-lg font-medium">
-        🚧 Coming Soon
-      </p>
     </div>
   );
 };

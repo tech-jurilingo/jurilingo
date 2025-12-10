@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/db";
 import Competition from "@/models/Competition";
+import { verifyToken } from "@/middlewares/auth";
+import { verifyAdmin } from "@/middlewares/verifyAdmin";
+import mongoose from "mongoose";
 
 // GET /api/competition/:id
 export async function GET(request, { params }) {
@@ -9,7 +12,7 @@ export async function GET(request, { params }) {
 
     const { id } = await params;
 
-    const competition = await Competition.findById(id).populate("participants");
+    const competition = await Competition.findById(id).populate("participants").populate("waitlist.user");
 
     if (!competition) {
       return NextResponse.json(
@@ -54,10 +57,10 @@ export async function DELETE(request, { params }) {
 
     await dbConnect();
 
-    const { id } = await params;
+    const { id: competitionId } = await params;
 
     // Validate if id is a valid MongoDB ObjectId
-    if (!mongoose.Types.ObjectId.isValid(id)) {
+    if (!mongoose.Types.ObjectId.isValid(competitionId)) {
       return NextResponse.json(
         {
           success: false,
@@ -67,7 +70,7 @@ export async function DELETE(request, { params }) {
       );
     }
 
-    const competition = await Competition.findByIdAndDelete(id);
+    const competition = await Competition.findByIdAndDelete(competitionId);
 
     if (!competition) {
       return NextResponse.json(
