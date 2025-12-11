@@ -4,11 +4,6 @@ import React, { useState, useEffect } from 'react';
 import { Calendar, IndianRupee } from 'lucide-react';
 import Link from 'next/link';
 
-/*  
-───────────────────────────────────────────────────────────────
- FULL ORIGINAL COMPONENT — 100% COMMENTED OUT
-───────────────────────────────────────────────────────────────
-
 const RecentCompetitions = () => {
   const colors = {
     teal: '#005F63',
@@ -180,24 +175,6 @@ const RecentCompetitions = () => {
   );
 };
 
-───────────────────────────────────────────────────────────────
- END OF ORIGINAL
-───────────────────────────────────────────────────────────────
-*/
 
-const RecentCompetitions = () => {
-  return (
-    <section className="w-full py-20 bg-white">
-      <div className="max-w-7xl mx-auto px-4 md:px-8 text-center">
-        <h2 className="text-3xl font-bold text-[#005F63] mb-4">
-          Upcoming Competitions
-        </h2>
-        <p className="text-gray-600 text-lg font-medium mt-6">
-          🚧 Coming Soon
-        </p>
-      </div>
-    </section>
-  );
-};
 
 export default RecentCompetitions;

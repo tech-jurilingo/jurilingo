@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/db";
 import Podcast from "@/models/Podcast";
+import { verifyAdmin } from "@/middlewares/verifyAdmin";
+import { verifyToken } from "@/middlewares/auth";
+import mongoose from "mongoose";
 
 // GET /api/podcast/:id
 export async function GET(request, { params }) {

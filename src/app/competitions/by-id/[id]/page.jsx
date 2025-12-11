@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Calendar, ArrowLeft, IndianRupee, Users, Clock, CheckCircle, XCircle } from 'lucide-react';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 
 const CompetitionDetail = () => {
@@ -12,8 +12,10 @@ const CompetitionDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [processingUserId, setProcessingUserId] = useState(null);
+  const [isRegistering, setIsRegistering] = useState(false);
   const params = useParams();
   const competitionId = params.id;
+  const router = useRouter();
   
   const colors = { teal: '#005F63', gold: '#E3B65B', bg: '#ffffff' };
 
@@ -25,6 +27,8 @@ const CompetitionDetail = () => {
         if (userResponse.ok) {
           const userData = await userResponse.json();
           setUser(userData);
+        } else {
+          setUser(null);
         }
 
         // Fetch competition details
@@ -35,7 +39,6 @@ const CompetitionDetail = () => {
         }
 
         const data = await response.json();
-        console.log('Fetched competition data:', data);
         
         if (data.success) {
           setCompetition(data.competition);
@@ -71,8 +74,8 @@ const CompetitionDetail = () => {
       const data = await response.json();
 
       if (data.success) {
-        // Update local state
-        setCompetition(data.competition);
+        // Update local state using returned competition (or refetch)
+        setCompetition(data.competition || await refetchCompetition());
       } else {
         alert(data.message || 'Failed to approve participant');
       }
@@ -98,8 +101,7 @@ const CompetitionDetail = () => {
       const data = await response.json();
 
       if (data.success) {
-        // Update local state
-        setCompetition(data.competition);
+        setCompetition(data.competition || await refetchCompetition());
       } else {
         alert(data.message || 'Failed to reject participant');
       }
@@ -109,6 +111,97 @@ const CompetitionDetail = () => {
     } finally {
       setProcessingUserId(null);
     }
+  };
+
+  // New: registration handler
+  const handleRegister = async () => {
+    if (!user) {
+      alert("Please login to register for competitions");
+      router.push('/auth/login');
+      return;
+    }
+
+    if (!competition?.registrationOpen) {
+      alert("Registration is currently closed.");
+      return;
+    }
+
+    // Check existing waitlist or participants (handles both populated and id-only arrays)
+    const isInWaitlist = competition.waitlist?.some(
+      (item) => {
+        // waitlist entries may have user as object or as ObjectId string
+        const uid = item.user?._id || item.user;
+        return uid === user.userId || uid === user._id;
+      }
+    );
+
+    const isParticipant = competition.participants?.some(
+      (p) => {
+        // participants may be populated user objects or just ids
+        const pid = p?._id || p;
+        return pid === user.userId || pid === user._id;
+      }
+    );
+
+    if (isInWaitlist) {
+      alert("You have already applied for this competition. Waiting for admin approval.");
+      return;
+    }
+
+    if (isParticipant) {
+      alert("You are already registered for this competition.");
+      return;
+    }
+
+    setIsRegistering(true);
+
+    try {
+      const response = await fetch(`/api/competition/by-id/${competitionId}/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId: user.userId }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        alert("Registration submitted — your application is pending admin approval.");
+
+        // Update local competition state using returned competition if provided,
+        // otherwise refetch to get the new waitlist.
+        if (data.competition) {
+          setCompetition(data.competition);
+        } else {
+          await refetchCompetitionAndSet();
+        }
+      } else {
+        alert(data.message || "Registration failed");
+      }
+    } catch (err) {
+      console.error("Error registering:", err);
+      alert("Failed to register. Please try again.");
+    } finally {
+      setIsRegistering(false);
+    }
+  };
+
+  const refetchCompetition = async () => {
+    try {
+      const res = await fetch(`/api/competition/by-id/${competitionId}`);
+      if (!res.ok) return null;
+      const d = await res.json();
+      return d.competition || null;
+    } catch (e) {
+      console.error("refetch error", e);
+      return null;
+    }
+  };
+
+  const refetchCompetitionAndSet = async () => {
+    const c = await refetchCompetition();
+    if (c) setCompetition(c);
   };
 
   const formatDate = (dateString) => {
@@ -239,6 +332,23 @@ const CompetitionDetail = () => {
               </div>
             </div>
           </div>
+
+          {/* Register button (for non-admins) */}
+          {!isAdmin && (
+            <div className="mt-6">
+              <button
+                onClick={handleRegister}
+                disabled={!competition.registrationOpen || isRegistering}
+                className={`px-6 py-3 rounded-md font-bold text-lg shadow-sm transition-all ${
+                  competition.registrationOpen && !isRegistering
+                    ? 'bg-[#005F63] text-white hover:bg-[#004a4d] hover:shadow-md'
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                }`}
+              >
+                {isRegistering ? 'Processing...' : competition.registrationOpen ? 'Register Now' : 'Registration Closed'}
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Payment QR Code */}
@@ -317,35 +427,36 @@ const CompetitionDetail = () => {
         {/* Participants List */}
         {isAdmin && (
           <div className="bg-white rounded-xl p-8 border border-gray-200">
-          <h2 className="text-2xl font-bold text-[#002B36] mb-6 flex items-center gap-2">
-            <Users size={24} className="text-[#E3B65B]" />
-            Registered Participants ({competition.participants?.length || 0})
-          </h2>
-          {competition.participants && competition.participants.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {competition.participants.map((participant, index) => (
-                <div
-                  key={participant._id || index}
-                  className="bg-gray-50 rounded-lg p-4 flex items-center gap-4 border border-gray-200"
-                >
-                  <div className="w-10 h-10 rounded-full bg-[#005F63] flex items-center justify-center text-white font-bold">
-                    {participant.name?.charAt(0) || 'U'}
+            <h2 className="text-2xl font-bold text-[#002B36] mb-6 flex items-center gap-2">
+              <Users size={24} className="text-[#E3B65B]" />
+              Registered Participants ({competition.participants?.length || 0})
+            </h2>
+            {competition.participants && competition.participants.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {competition.participants.map((participant, index) => (
+                  <div
+                    key={participant._id || index}
+                    className="bg-gray-50 rounded-lg p-4 flex items-center gap-4 border border-gray-200"
+                  >
+                    <div className="w-10 h-10 rounded-full bg-[#005F63] flex items-center justify-center text-white font-bold">
+                      {participant.name?.charAt(0) || 'U'}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-gray-900">
+                        {participant.name || 'Unknown User'}
+                      </p>
+                      <p className="text-sm text-gray-500">{participant.email}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-semibold text-gray-900">
-                      {participant.name || 'Unknown User'}
-                    </p>
-                    <p className="text-sm text-gray-500">{participant.email}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-gray-500 text-center py-8">
-              No participants registered yet.
-            </p>
-          )}
-        </div>)}
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-500 text-center py-8">
+                No participants registered yet.
+              </p>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useEffect, useState } from "react";
 import { Calendar, Clock, Users, Trash2 } from "lucide-react";
@@ -58,67 +58,6 @@ const CompetitionsList = () => {
     const min = String(date.getMinutes()).padStart(2, "0");
 
     return `${dd}-${mm}-${yyyy} ${hh}:${min}`;
-  };
-
-  const handleRegister = async (competition) => {
-    if (!user) {
-      alert("Please login to register for competitions");
-      router.push('/auth/login');
-      return;
-    }
-
-    if (!competition.registrationOpen) {
-      alert("Registration is currently closed.");
-      return;
-    }
-
-    const isInWaitlist = competition.waitlist?.some(
-      (item) => item._id === user.userId
-    );
-    const isParticipant = competition.participants?.some(
-      (p) => p === user._id || p._id === user.userId
-    );
-
-    if (isInWaitlist) {
-      alert("You have already applied for this competition. Waiting for admin approval.");
-      return;
-    }
-
-    if (isParticipant) {
-      alert("You are already registered for this competition.");
-      return;
-    }
-
-    setProcessingId(competition._id);
-
-    try {
-      const response = await fetch(`/api/competition/by-id/${competition._id}/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ userId: user.userId }),
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        alert("Registration successful! Your application is pending admin approval.");
-
-        const res = await fetch("/api/competition/status/active");
-        const updatedData = await res.json();
-        if (updatedData.success) {
-          setCompetitions(updatedData.competitions || []);
-        }
-      } else {
-        alert(data.message || "Registration failed");
-      }
-    } catch (err) {
-      console.error("Error registering:", err);
-      alert("Failed to register. Please try again.");
-    } finally {
-      setProcessingId(null);
-    }
   };
 
   const handleDelete = async (competitionId, title) => {
@@ -198,25 +137,17 @@ const CompetitionsList = () => {
                       <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
                         <div className="flex items-center gap-2">
                           <span
-                            className={`inline-block px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full ${
-                              isActive
-                                ? "bg-[#E3B65B]/20 text-[#005F63]"
-                                : "bg-gray-200 text-gray-500"
-                            }`}
+                            className={`inline-block px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full $$
+                              {isActive ? "bg-[#E3B65B]/20 text-[#005F63]" : "bg-gray-200 text-gray-500"}`}
                           >
                             {comp.status}
                           </span>
 
                           <span
-                            className={`inline-block px-3 py-1 text-xs font-semibold rounded-full ${
-                              isRegistrationOpen
-                                ? "bg-emerald-100 text-emerald-700"
-                                : "bg-gray-200 text-gray-600"
-                            }`}
+                            className={`inline-block px-3 py-1 text-xs font-semibold rounded-full $$
+                              {isRegistrationOpen ? "bg-emerald-100 text-emerald-700" : "bg-gray-200 text-gray-600"}`}
                           >
-                            {isRegistrationOpen
-                              ? "Registration Open"
-                              : "Registration Closed"}
+                            {isRegistrationOpen ? "Registration Open" : "Registration Closed"}
                           </span>
                         </div>
 
@@ -270,24 +201,6 @@ const CompetitionsList = () => {
                       >
                         View Details
                       </Link>
-
-                      {!isAdmin && (
-                        <button
-                          onClick={() => handleRegister(comp)}
-                          disabled={!isActive || !isRegistrationOpen || isProcessing}
-                          className={`w-full px-8 py-3 rounded-md font-bold text-lg shadow-sm transition-all ${
-                            isActive && isRegistrationOpen && !isProcessing
-                              ? "bg-[#005F63] text-white hover:bg-[#004a4d] hover:shadow-md"
-                              : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                          }`}
-                        >
-                          {isProcessing
-                            ? "Processing..."
-                            : isActive && isRegistrationOpen
-                            ? "Register Now"
-                            : "Registration Closed"}
-                        </button>
-                      )}
 
                       {isAdmin && (
                         <button
