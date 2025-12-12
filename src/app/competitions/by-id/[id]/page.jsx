@@ -336,6 +336,12 @@ const CompetitionDetail = () => {
           {/* Register button (for non-admins) */}
           {!isAdmin && (
             <div className="mt-6">
+
+              {/* Payment instruction note */}
+              <p className="text-red-600 font-semibold mb-3 text-sm">
+                Please scan the QR code and complete the payment before clicking the Register button.
+              </p>
+
               <button
                 onClick={handleRegister}
                 disabled={!competition.registrationOpen || isRegistering}
@@ -348,7 +354,8 @@ const CompetitionDetail = () => {
                 {isRegistering ? 'Processing...' : competition.registrationOpen ? 'Register Now' : 'Registration Closed'}
               </button>
             </div>
-          )}
+)}
+
         </div>
 
         {/* Payment QR Code */}
