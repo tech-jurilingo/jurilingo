@@ -23,7 +23,7 @@ export async function GET(request) {
         { status: 400 }
       );
     }
-
+    console.log("Fetched user data:", user);
     return NextResponse.json(user);
   } catch (error) {
     console.log(error);

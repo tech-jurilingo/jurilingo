@@ -6,9 +6,6 @@ import Image from 'next/image';
 import { ChevronDown, Menu, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-/**
- * JuriLingo Navbar Component
- */
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
@@ -64,10 +61,9 @@ const Navbar = () => {
       className="w-full px-4 md:px-8 py-3 shadow-md relative z-50"
       style={{ backgroundColor: colors.teal }}
     >
-      {/* FIXED NAVBAR HEIGHT */}
       <div className="max-w-7xl mx-auto flex justify-between items-center h-20">
 
-        {/* LOGO SECTION — DO NOT CHANGE HEIGHT BASED ON LOGO SIZE */}
+        {/* LOGO */}
         <Link href="/" className="flex items-center gap-3 group">
           <div className="relative h-16 w-16 md:h-14 md:w-14">
             <Image
@@ -82,10 +78,7 @@ const Navbar = () => {
             <h1 className="text-white font-bold text-2xl leading-tight tracking-tight font-sans">
               JuriLingo
             </h1>
-            <span
-              className="text font-medium tracking-wide"
-              style={{ color: colors.gold }}
-            >
+            <span className="text font-medium tracking-wide" style={{ color: colors.gold }}>
               Unlocking the Language of Justice
             </span>
           </div>
@@ -97,11 +90,21 @@ const Navbar = () => {
             <Link
               key={link.name}
               href={link.href}
-              className="text-lg font-medium text-white transition-colors duration-200 hover:text-[#E3B65B]"
+              className="text-lg font-medium text-white transition-colors hover:text-[#E3B65B]"
             >
               {link.name}
             </Link>
           ))}
+
+          {/* ⭐ DASHBOARD LINK FOR LOGGED-IN USER */}
+          {!loading && user && (
+            <Link
+              href="/dashboard"
+              className="text-lg font-medium text-white hover:text-[#E3B65B]"
+            >
+              Dashboard
+            </Link>
+          )}
 
           {/* ABOUT DROPDOWN */}
           <div className="relative">
@@ -113,9 +116,7 @@ const Navbar = () => {
               About
               <ChevronDown
                 size={18}
-                className={`transition-transform duration-200 ${
-                  isAboutOpen ? 'rotate-180' : ''
-                }`}
+                className={`transition-transform ${isAboutOpen ? 'rotate-180' : ''}`}
               />
             </button>
 
@@ -124,16 +125,10 @@ const Navbar = () => {
                 className="absolute top-full right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2"
                 onMouseLeave={() => setIsAboutOpen(false)}
               >
-                <Link
-                  href="/about/jurilingo"
-                  className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
-                >
+                <Link href="/about/jurilingo" className="block px-4 py-2 hover:bg-gray-100">
                   JuriLingo
                 </Link>
-                <Link
-                  href="/about/founder"
-                  className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
-                >
+                <Link href="/about/founder" className="block px-4 py-2 hover:bg-gray-100">
                   Founder
                 </Link>
               </div>
@@ -151,9 +146,7 @@ const Navbar = () => {
                 Admin
                 <ChevronDown
                   size={18}
-                  className={`transition-transform duration-200 ${
-                    isAdminOpen ? 'rotate-180' : ''
-                  }`}
+                  className={`transition-transform ${isAdminOpen ? 'rotate-180' : ''}`}
                 />
               </button>
 
@@ -176,19 +169,18 @@ const Navbar = () => {
               {user ? (
                 <button
                   onClick={handleLogout}
-                  className="text-white text-lg font-medium hover:underline decoration-[#E3B65B] decoration-2 underline-offset-4"
+                  className="text-white text-lg font-medium hover:underline decoration-[#E3B65B]"
                 >
                   Logout
                 </button>
               ) : (
                 <>
-                  <Link href="/auth/login" className="text-white text-lg font-medium hover:underline decoration-[#E3B65B]">
+                  <Link href="/auth/login" className="text-white text-lg hover:text-[#E3B65B]">
                     Login
                   </Link>
-
                   <Link
                     href="/auth/register"
-                    className="px-6 py-2 rounded-md font-bold text-lg shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
+                    className="px-6 py-2 rounded-md font-bold text-lg shadow-sm"
                     style={{ backgroundColor: colors.gold, color: colors.teal }}
                   >
                     Register
@@ -201,10 +193,7 @@ const Navbar = () => {
 
         {/* MOBILE MENU BUTTON */}
         <div className="md:hidden">
-          <button
-            onClick={() => setIsMobileMenuOpen((v) => !v)}
-            className="text-white"
-          >
+          <button onClick={() => setIsMobileMenuOpen((v) => !v)} className="text-white">
             {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
           </button>
         </div>
@@ -213,6 +202,7 @@ const Navbar = () => {
       {/* MOBILE DROPDOWN */}
       {isMobileMenuOpen && (
         <div className="md:hidden pt-4 pb-6 border-t border-white/20 mt-2 space-y-4">
+
           {navLinks.map((link) => (
             <Link
               key={link.name}
@@ -224,7 +214,18 @@ const Navbar = () => {
             </Link>
           ))}
 
-          {/* About */}
+          {/* ⭐ MOBILE DASHBOARD LINK */}
+          {!loading && user && (
+            <Link
+              href="/dashboard"
+              className="block px-2 text-white text-lg hover:text-[#E3B65B]"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Dashboard
+            </Link>
+          )}
+
+          {/* ABOUT */}
           <div className="px-2">
             <span className="text-sm uppercase tracking-wider text-white/70">About</span>
             <div className="pl-4 border-l-2 border-[#E3B65B] mt-2 space-y-2">
@@ -233,7 +234,7 @@ const Navbar = () => {
             </div>
           </div>
 
-          {/* Admin */}
+          {/* ADMIN (Mobile) */}
           {isAdmin && (
             <div className="px-2">
               <span className="text-sm uppercase tracking-wider text-white/70">Admin</span>
@@ -245,7 +246,7 @@ const Navbar = () => {
             </div>
           )}
 
-          {/* Auth */}
+          {/* AUTH */}
           {!loading && (
             <div className="pt-4 flex flex-col gap-3 px-2">
               {user ? (
@@ -261,7 +262,15 @@ const Navbar = () => {
               ) : (
                 <>
                   <Link href="/auth/login" className="py-2 text-white border border-white rounded text-center hover:bg-white/10" onClick={() => setIsMobileMenuOpen(false)}>Login</Link>
-                  <Link href="/auth/register" className="py-2 font-bold text-center rounded" style={{ backgroundColor: colors.gold, color: colors.teal }} onClick={() => setIsMobileMenuOpen(false)}>Register</Link>
+
+                  <Link
+                    href="/auth/register"
+                    className="py-2 font-bold text-center rounded"
+                    style={{ backgroundColor: colors.gold, color: colors.teal }}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Register
+                  </Link>
                 </>
               )}
             </div>
