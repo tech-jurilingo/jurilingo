@@ -26,7 +26,6 @@ const RecentPodcasts = () => {
           setError(data.message);
         }
       } catch (err) {
-        console.error('Error fetching podcasts:', err);
         setError('Failed to load podcasts');
       } finally {
         setLoading(false);

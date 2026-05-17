@@ -14,7 +14,7 @@ const CTASection = () => {
           className="text-3xl md:text-4xl font-bold mb-6 font-serif tracking-tight"
           style={{ color: colors.teal }}
         >
-          Ready to Elevate Your Moot Court Experience?
+          Upcoming Competitions
         </h2>
 
         <p

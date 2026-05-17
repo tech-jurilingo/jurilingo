@@ -27,7 +27,7 @@ const CompetitionsList = () => {
         }
 
         const res = await fetch("/api/competition", { method: "GET" });
-        const data = await res.json();
+        const data = await res.json().catch(() => null);
 
         if (!res.ok) {
           throw new Error(data?.message || "Failed to fetch competitions");
@@ -35,7 +35,6 @@ const CompetitionsList = () => {
 
         setCompetitions(data?.competitions || []);
       } catch (err) {
-        console.error("Error fetching data:", err);
         setError(err.message || "Something went wrong while fetching data");
       } finally {
         setLoading(false);

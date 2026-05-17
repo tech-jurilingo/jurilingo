@@ -1,8 +1,8 @@
 import Navbar from "@/components/navbar";
 import Hero from "@/components/hero";
+import AnnouncementsSection from "@/components/announcementssection";
 import Features from "@/components/features";
 import CTASection from "@/components/ctasection";
-import RecentCompetitions from "@/components/recentcompetition";
 import RecentPodcasts from "@/components/recentpodcast";
 import Footer from "@/components/footer";
 
@@ -12,9 +12,9 @@ export default function HomePage() {
       <Navbar />
       <main className="flex-1">
         <Hero />
+        <AnnouncementsSection />
         <Features />
         <CTASection />
-        <RecentCompetitions />
         <RecentPodcasts />
       </main>
       <Footer />

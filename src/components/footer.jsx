@@ -13,12 +13,12 @@ const Footer = () => {
 
   return (
     <footer
-      className="w-full text-white pt-16 pb-8"
+      className="w-full text-white pt-8 pb-4"
       style={{ backgroundColor: colors.teal }}
     >
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         {/* Top Grid Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           
           {/* Column 1: Brand Info */}
           <div className="flex flex-col gap-6">
@@ -78,7 +78,7 @@ const Footer = () => {
               <li><Link href="/" className="text-white/80 hover:text-white transition-colors">Home</Link></li>
               <li><Link href="/competitions" className="text-white/80 hover:text-white transition-colors">Competitions</Link></li>
               <li><Link href="/about/jurilingo" className="text-white/80 hover:text-white transition-colors">About JuriLingo</Link></li>
-              <li><Link href="/about/founder" className="text-white/80 hover:text-white transition-colors">Meet the Founder</Link></li>
+              <li><Link href="/about/team" className="text-white/80 hover:text-white transition-colors">Meet the Team</Link></li>
               <li><Link href="/auth/register" className="text-white/80 hover:text-white transition-colors">Register</Link></li>
             </ul>
           </div>

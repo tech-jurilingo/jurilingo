@@ -1,13 +1,14 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { User, RefreshCw, Users } from 'lucide-react';
+import { User, RefreshCw, Users, UserCheck, Phone, Mail } from 'lucide-react';
 import Link from 'next/link';
 
 /**
  * UserDashboard
  * - Uses GET /api/auth/me to get user
  * - Uses GET /api/competition/user/:userId to get competitions for that user
+ * - Admins also see total registrations via GET /api/auth/registrations
  */
 
 const UserDashboard = () => {
@@ -17,6 +18,10 @@ const UserDashboard = () => {
   const [loadingComps, setLoadingComps] = useState(false);
   const [error, setError] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
+
+  // Admin-only state
+  const [registrations, setRegistrations] = useState(null);
+  const [loadingRegs, setLoadingRegs] = useState(false);
 
   const colors = { teal: '#005F63', gold: '#E3B65B', bg: '#F8FAF8' };
 
@@ -54,11 +59,31 @@ const UserDashboard = () => {
       const cData = await cRes.json();
       setComps(Array.isArray(cData.competitions) ? cData.competitions : []);
       setLoadingComps(false);
+
+      // 3) If admin, also load registrations
+      if (uData.role === 'admin') {
+        loadRegistrations();
+      }
     } catch (err) {
       console.error('Dashboard load error', err);
       setError(err.message || 'Failed to load dashboard');
       setLoadingUser(false);
       setLoadingComps(false);
+    }
+  }
+
+  async function loadRegistrations() {
+    setLoadingRegs(true);
+    try {
+      const res = await fetch('/api/auth/registrations');
+      if (res.ok) {
+        const data = await res.json();
+        setRegistrations(data);
+      }
+    } catch (err) {
+      console.error('Failed to load registrations:', err);
+    } finally {
+      setLoadingRegs(false);
     }
   }
 
@@ -90,6 +115,8 @@ const UserDashboard = () => {
     const info = map[status] || { text: status, cls: 'bg-gray-100 text-gray-800' };
     return <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${info.cls}`}>{info.text}</span>;
   };
+
+  const isAdmin = user?.role === 'admin';
 
   return (
     <div style={{ backgroundColor: colors.bg }} className="grow w-full py-12 px-4 md:px-8">
@@ -145,6 +172,76 @@ const UserDashboard = () => {
             )}
           </div>
         </div>
+
+        {/* ===== ADMIN ONLY: Registrations Panel ===== */}
+        {isAdmin && (
+          <div className="bg-white rounded-xl shadow-sm p-6 mb-6 border border-gray-100">
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-3">
+                <UserCheck size={20} className="text-[#E3B65B]" />
+                <h4 className="text-lg font-semibold text-[#002B36]">Website Registrations</h4>
+              </div>
+              {registrations && (
+                <span
+                  className="px-3 py-1 rounded-full text-sm font-bold text-white"
+                  style={{ backgroundColor: colors.teal }}
+                >
+                  {registrations.totalRegistrations} Total
+                </span>
+              )}
+            </div>
+
+            {loadingRegs ? (
+              <div className="py-8 text-center text-gray-500 animate-pulse">Loading registrations...</div>
+            ) : !registrations ? (
+              <div className="py-8 text-center text-gray-500">No registration data available.</div>
+            ) : registrations.users.length === 0 ? (
+              <div className="py-8 text-center text-gray-500">No users have registered yet.</div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-gray-100">
+                      <th className="text-left pb-3 font-semibold text-gray-500 pr-4">#</th>
+                      <th className="text-left pb-3 font-semibold text-gray-500 pr-4">Name</th>
+                      <th className="text-left pb-3 font-semibold text-gray-500 pr-4">Email</th>
+                      <th className="text-left pb-3 font-semibold text-gray-500">Phone</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-50">
+                    {registrations.users.map((u, idx) => (
+                      <tr key={u._id} className="hover:bg-gray-50 transition-colors">
+                        <td className="py-3 pr-4 text-gray-400 font-mono text-xs">
+                          {registrations.users.length - idx}
+                        </td>
+                        <td className="py-3 pr-4 font-medium text-[#002B36]">
+                          <div className="flex items-center gap-2">
+                            <div className="w-7 h-7 rounded-full bg-[#005F63]/10 flex items-center justify-center text-[#005F63] text-xs font-bold shrink-0">
+                              {(u.name || u.email || '?')[0].toUpperCase()}
+                            </div>
+                            {u.name || '—'}
+                          </div>
+                        </td>
+                        <td className="py-3 pr-4 text-gray-600">
+                          <div className="flex items-center gap-1.5">
+                            <Mail size={13} className="text-gray-400 shrink-0" />
+                            {u.email}
+                          </div>
+                        </td>
+                        <td className="py-3 text-gray-600">
+                          <div className="flex items-center gap-1.5">
+                            <Phone size={13} className="text-gray-400 shrink-0" />
+                            {u.phonenumber || '—'}
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Competitions taken part in */}
         <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">

@@ -34,7 +34,6 @@ const PodcastsList = () => {
 
         setPodcasts(data?.podcasts || []);
       } catch (err) {
-        console.error("Error fetching podcasts:", err);
         setError(err.message || "Something went wrong while fetching podcasts");
       } finally {
         setLoading(false);

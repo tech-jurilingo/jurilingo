@@ -32,13 +32,13 @@ const Hero = () => {
 
   return (
     <section className="w-full" style={{ backgroundColor: colors.teal }}>
-      <div className="max-w-7xl mx-auto px-4 md:px-8 py-20 md:py-16">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 py-10 md:py-8">
         <div className="max-w-3xl">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-6 tracking-tight">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-tight mb-4 tracking-tight">
             Learn the law. Speak the law. Live the law
           </h1>
 
-          <p className="text-lg md:text-xl text-white/90 mb-10 leading-relaxed font-light">
+          <p className="text-base md:text-lg text-white/90 mb-6 leading-relaxed font-light">
             Because understanding the law should feel human, not intimidating.
           </p>
 
