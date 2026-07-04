@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Scale } from "lucide-react";
+import { Scale, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -10,6 +10,7 @@ const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
   const colors = {
@@ -96,18 +97,27 @@ const Login = () => {
               <label className="block text-sm font-bold text-gray-700">
                 Password
               </label>
-              <Link href="/forgot-password" className="text-sm text-[#005F63] hover:underline">
+              <Link href="/auth/forgot-password" className="text-sm text-[#005F63] hover:underline">
                 Forgot password?
               </Link>
             </div>
-            <input
-              type="password"
-              name="password"
-              required
-              value={formData.password}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-[#005F63] focus:outline-none"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                required
+                value={formData.password}
+                onChange={handleChange}
+                className="w-full pl-3 pr-10 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-[#005F63] focus:outline-none"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
           </div>
 
           {error && <p className="text-red-600 text-sm">{error}</p>}
