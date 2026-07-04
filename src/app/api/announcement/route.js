@@ -49,7 +49,17 @@ export async function GET(request) {
   try {
     await dbConnect();
 
-    const announcements = await Announcement.find().sort({ createdAt: -1 }).limit(10);
+    const { searchParams } = new URL(request.url);
+    const limitParam = searchParams.get("limit");
+    
+    let query = Announcement.find().sort({ createdAt: -1 });
+
+    if (limitParam !== "all") {
+      const limit = parseInt(limitParam, 10) || 10;
+      query = query.limit(limit);
+    }
+
+    const announcements = await query;
 
     return NextResponse.json({
       success: true,

@@ -15,16 +15,20 @@ const AnnouncementsSection = () => {
   };
 
   useEffect(() => {
-    const fetchAnnouncements = async () => {
+    const fetchUser = async () => {
       try {
-        // Fetch user token for admin check
         const userRes = await fetch('/api/auth/validate-token');
         if (userRes.ok) {
           const userData = await userRes.json();
           setUser(userData);
         }
+      } catch (err) {
+        console.error('Error validating token:', err);
+      }
+    };
 
-        // Fetch announcements
+    const fetchAnnouncements = async () => {
+      try {
         const res = await fetch('/api/announcement');
         if (res.ok) {
           const data = await res.json();
@@ -37,6 +41,7 @@ const AnnouncementsSection = () => {
       }
     };
 
+    fetchUser();
     fetchAnnouncements();
   }, []);
 
@@ -92,13 +97,14 @@ const AnnouncementsSection = () => {
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center gap-4 flex-wrap">
           {/* Label */}
-          <div
-            className="flex items-center gap-2 px-4 py-2 rounded-full text-white text-base font-bold shrink-0 shadow-sm"
+          <Link
+            href="/announcements"
+            className="flex items-center gap-2 px-4 py-2 rounded-full text-white text-base font-bold shrink-0 shadow-sm hover:brightness-110 hover:scale-105 transition-all duration-200 cursor-pointer"
             style={{ backgroundColor: colors.teal }}
           >
             <Megaphone size={18} />
             <span>Announcements</span>
-          </div>
+          </Link>
 
           {/* Scrolling items */}
           {loading ? (

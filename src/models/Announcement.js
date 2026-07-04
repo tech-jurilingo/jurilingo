@@ -20,4 +20,6 @@ const AnnouncementSchema = new mongoose.Schema({
   },
 });
 
+AnnouncementSchema.index({ createdAt: -1 });
+
 export default mongoose.models.Announcement || mongoose.model('Announcement', AnnouncementSchema);

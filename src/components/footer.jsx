@@ -34,7 +34,7 @@ const Footer = () => {
             </div>
 
             <p className="text-white/80 leading-relaxed text-sm">
-              Learn the law. Speak the law. Live the law
+              Unlocking the Language of Justice
             </p>
 
             {/* Social Icons */}

@@ -8,9 +8,9 @@ import Image from "next/image";
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
   const colors = {
@@ -97,9 +97,6 @@ const Login = () => {
               <label className="block text-sm font-bold text-gray-700">
                 Password
               </label>
-              <Link href="/auth/forgot-password" className="text-sm text-[#005F63] hover:underline">
-                Forgot password?
-              </Link>
             </div>
             <div className="relative">
               <input
@@ -112,8 +109,8 @@ const Login = () => {
               />
               <button
                 type="button"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700 cursor-pointer"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
