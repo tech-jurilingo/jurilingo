@@ -76,14 +76,14 @@ const CompetitionsList = () => {
       const data = await response.json();
 
       if (data.success) {
-        alert("Competition deleted successfully!");
+        alert("Event deleted successfully!");
         setCompetitions(competitions.filter(c => c._id !== competitionId));
       } else {
-        alert(data.message || "Failed to delete competition");
+        alert(data.message || "Failed to delete event");
       }
     } catch (err) {
-      console.error("Error deleting competition:", err);
-      alert("Failed to delete competition. Please try again.");
+      console.error("Error deleting event:", err);
+      alert("Failed to delete event. Please try again.");
     } finally {
       setProcessingId(null);
     }
@@ -100,22 +100,22 @@ const CompetitionsList = () => {
 
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold font-serif text-[#002B36] mb-4">
-            Upcoming Competitions
+            Upcoming Events
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Browse and register for prestigious national & international moot court competitions.
+            Browse and register for upcoming events.
           </p>
         </div>
 
         {loading ? (
           <div className="text-center py-20 text-gray-500">
-            Loading competitions...
+            Loading Events...
           </div>
         ) : error ? (
           <div className="text-center py-20 text-red-500">{error}</div>
         ) : competitions.length === 0 ? (
           <div className="text-center py-20 text-gray-500">
-            No competitions found.
+            No events found.
           </div>
         ) : (
           <div className="space-y-6">
@@ -176,7 +176,7 @@ const CompetitionsList = () => {
                         <div className="flex items-start gap-2">
                           <Clock size={16} className="text-[#E3B65B] mt-0.5" />
                           <span>
-                            Competition:{" "}
+                            Event:{" "}
                             <strong>{formatDateTime(comp.startDate)}</strong> →{" "}
                             <strong>{formatDateTime(comp.endDate)}</strong>
                           </span>

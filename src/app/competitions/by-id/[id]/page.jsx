@@ -43,11 +43,11 @@ const CompetitionDetail = () => {
         if (data.success) {
           setCompetition(data.competition);
         } else {
-          setError(data.message || 'Failed to load competition');
+          setError(data.message || 'Failed to load Event');
         }
       } catch (err) {
-        console.error('Error fetching competition:', err);
-        setError(err.message || 'Failed to load competition');
+        console.error('Error fetching Event:', err);
+        setError(err.message || 'Failed to load event');
       } finally {
         setLoading(false);
       }
@@ -116,7 +116,7 @@ const CompetitionDetail = () => {
   // New: registration handler
   const handleRegister = async () => {
     if (!user) {
-      alert("Please login to register for competitions");
+      alert("Please login to register for events");
       router.push('/auth/login');
       return;
     }
@@ -144,12 +144,12 @@ const CompetitionDetail = () => {
     );
 
     if (isInWaitlist) {
-      alert("You have already applied for this competition. Waiting for admin approval.");
+      alert("You have already applied for this event. Waiting for admin approval.");
       return;
     }
 
     if (isParticipant) {
-      alert("You are already registered for this competition.");
+      alert("You are already registered for this event.");
       return;
     }
 
@@ -220,7 +220,7 @@ const CompetitionDetail = () => {
       <div className="grow flex items-center justify-center min-h-[50vh]">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#005F63] mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading competition...</p>
+          <p className="text-gray-600">Loading events...</p>
         </div>
       </div>
     );
@@ -247,13 +247,13 @@ const CompetitionDetail = () => {
     return (
       <div className="grow flex items-center justify-center min-h-[50vh]">
         <div className="text-center">
-          <p className="text-gray-600 mb-4">Competition not found.</p>
+          <p className="text-gray-600 mb-4">Event not found.</p>
           <Link
             href="/competitions"
             className="inline-flex items-center text-[#005F63] hover:underline"
           >
             <ArrowLeft size={20} className="mr-2" />
-            Back to Competitions
+            Back to Events
           </Link>
         </div>
       </div>
@@ -268,7 +268,7 @@ const CompetitionDetail = () => {
           className="flex items-center text-gray-500 hover:text-[#005F63] mb-8 transition-colors"
         >
           <ArrowLeft size={20} className="mr-2" />
-          Back to Competitions
+          Back to Events
         </Link>
 
         {/* Competition Details */}
@@ -296,7 +296,7 @@ const CompetitionDetail = () => {
             <div className="flex items-start gap-3">
               <Calendar size={20} className="text-[#E3B65B] mt-1 shrink-0" />
               <div>
-                <p className="font-semibold text-gray-900 mb-1">Competition Dates</p>
+                <p className="font-semibold text-gray-900 mb-1">Event Dates</p>
                 <p className="text-gray-600 text-sm">
                   {formatDate(competition.startDate)} - {formatDate(competition.endDate)}
                 </p>

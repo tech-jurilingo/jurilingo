@@ -22,7 +22,7 @@ const Navbar = () => {
   const navLinks = [
     { name: 'Blogs', href: '/blogs' },
     { name: 'Podcasts', href: '/podcasts' },
-    { name: 'Competitions', href: '/competitions' },
+    { name: 'Events', href: '/competitions' },
   ];
 
   useEffect(() => {
@@ -159,7 +159,7 @@ const Navbar = () => {
                   onMouseLeave={() => setIsAdminOpen(false)}
                 >
                   <Link href="/blogs/new" className="block px-4 py-2 hover:bg-gray-100">Add Blogs</Link>
-                  <Link href="/competitions/new" className="block px-4 py-2 hover:bg-gray-100">Add Competitions</Link>
+                  <Link href="/competitions/new" className="block px-4 py-2 hover:bg-gray-100">Add Event</Link>
                   <Link href="/podcasts/new" className="block px-4 py-2 hover:bg-gray-100">Add Podcasts</Link>
                   <Link href="/announcements/new" className="block px-4 py-2 hover:bg-gray-100 font-semibold" style={{ color: '#005F63' }}>Add Announcement</Link>
                 </div>
@@ -245,7 +245,7 @@ const Navbar = () => {
               <span className="text-sm uppercase tracking-wider text-white/70">Admin</span>
               <div className="pl-4 border-l-2 border-[#E3B65B] mt-2 space-y-2">
                 <Link href="/blogs/new" className="block py-1 text-white hover:text-[#E3B65B]" onClick={() => setIsMobileMenuOpen(false)}>Add Blogs</Link>
-                <Link href="/competitions/new" className="block py-1 text-white hover:text-[#E3B65B]" onClick={() => setIsMobileMenuOpen(false)}>Add Competitions</Link>
+                <Link href="/competitions/new" className="block py-1 text-white hover:text-[#E3B65B]" onClick={() => setIsMobileMenuOpen(false)}>Add Event</Link>
                 <Link href="/podcasts/new" className="block py-1 text-white hover:text-[#E3B65B]" onClick={() => setIsMobileMenuOpen(false)}>Add Podcasts</Link>
                 <Link href="/announcements/new" className="block py-1 text-[#E3B65B] font-semibold" onClick={() => setIsMobileMenuOpen(false)}>Add Announcement</Link>
               </div>

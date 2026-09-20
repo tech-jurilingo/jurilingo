@@ -76,7 +76,7 @@ const Footer = () => {
             </h3>
             <ul className="space-y-4 text-sm">
               <li><Link href="/" className="text-white/80 hover:text-white transition-colors">Home</Link></li>
-              <li><Link href="/competitions" className="text-white/80 hover:text-white transition-colors">Competitions</Link></li>
+              <li><Link href="/competitions" className="text-white/80 hover:text-white transition-colors">Events</Link></li>
               <li><Link href="/about/jurilingo" className="text-white/80 hover:text-white transition-colors">About JuriLingo</Link></li>
               <li><Link href="/about/team" className="text-white/80 hover:text-white transition-colors">Meet the Team</Link></li>
               <li><Link href="/auth/register" className="text-white/80 hover:text-white transition-colors">Register</Link></li>

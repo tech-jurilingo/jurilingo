@@ -62,11 +62,11 @@ const CompetitionEditor = () => {
       const data = await res.json().catch(() => null);
 
       if (!res.ok) {
-        alert(data?.message || "Failed to create competition");
+        alert(data?.message || "Failed to create event");
         return;
       }
 
-      alert(data?.message || "Competition created successfully");
+      alert(data?.message || "Event created successfully");
 
       // Reset form
       setFormData({
@@ -79,8 +79,8 @@ const CompetitionEditor = () => {
         registrationEndDate: "",
       });
     } catch (error) {
-      console.error("Error creating competition:", error);
-      alert("Server error while creating competition");
+      console.error("Error creating event:", error);
+      alert("Server error while creating event");
     } finally {
       setIsSubmitting(false);
     }
@@ -96,7 +96,7 @@ const CompetitionEditor = () => {
         <div className="px-8 py-6 border-b border-gray-100 flex justify-between items-center">
           <div>
             <h2 className="text-2xl font-bold font-serif text-[#002B36]">
-              Host New Competition
+              Host New Event
             </h2>
             <p className="text-sm text-gray-500">
               Organize a moot court and invite participants
@@ -118,7 +118,7 @@ const CompetitionEditor = () => {
           {/* Title Input */}
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-2">
-              Competition Title
+              Event Title
             </label>
             <input
               type="text"
@@ -209,12 +209,12 @@ const CompetitionEditor = () => {
             <div className="hidden md:block" />
           </div>
 
-          {/* Grid: Competition Dates */}
+          {/* Grid: Event Dates */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Start Date */}
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-2">
-                Competition Start Date & Time
+                Event Start Date & Time
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -233,7 +233,7 @@ const CompetitionEditor = () => {
             {/* End Date */}
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-2">
-                Competition End Date & Time
+                Event End Date & Time
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -269,7 +269,7 @@ const CompetitionEditor = () => {
               disabled={isSubmitting}
             >
               <Save size={18} />
-              {isSubmitting ? "Creating..." : "Create Competition"}
+              {isSubmitting ? "Creating..." : "Create Event"}
             </button>
           </div>
         </div>
