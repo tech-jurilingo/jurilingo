@@ -167,7 +167,7 @@ const UserDashboard = () => {
               </>
             ) : (
               <div className="text-gray-600">
-                Not logged in. <Link href="/auth/login" className="text-[#005F63] underline">Sign in</Link> to see your competitions.
+                Not logged in. <Link href="/auth/login" className="text-[#005F63] underline">Sign in</Link> to see your events.
               </div>
             )}
           </div>
@@ -248,7 +248,7 @@ const UserDashboard = () => {
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <Users size={20} className="text-[#E3B65B]" />
-              <h4 className="text-lg font-semibold text-[#002B36]">Your Competitions</h4>
+              <h4 className="text-lg font-semibold text-[#002B36]">Your Events</h4>
             </div>
             <div className="text-sm text-gray-500">
               {loadingComps ? 'Loading…' : `${comps.length} item${comps.length === 1 ? '' : 's'}`}
@@ -256,9 +256,9 @@ const UserDashboard = () => {
           </div>
 
           {loadingComps ? (
-            <div className="py-8 text-center text-gray-500">Loading competitions...</div>
+            <div className="py-8 text-center text-gray-500">Loading events...</div>
           ) : comps.length === 0 ? (
-            <div className="py-8 text-center text-gray-500">You haven't applied to any competitions yet.</div>
+            <div className="py-8 text-center text-gray-500">You haven't applied to any events yet.</div>
           ) : (
             <div className="divide-y">
               {comps.map((c) => (
