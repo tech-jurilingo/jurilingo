@@ -1,5 +1,23 @@
 
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
+
+const AttachmentSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      trim: true,
+    },
+    url: {
+      type: String,
+      required: true,
+    },
+    fileType: {
+      type: String,
+      default: "link",
+    },
+  },
+  { _id: false }
+);
 
 const AnnouncementSchema = new mongoose.Schema({
   title: {
@@ -8,49 +26,33 @@ const AnnouncementSchema = new mongoose.Schema({
     trim: true,
   },
 
-  description: {
-    type: String,
-    default: '',
-  },
-
   type: {
     type: String,
-    enum: ['General', 'Blog', 'Podcast', 'Competition'],
-    default: 'General',
+    required: true,
   },
 
   linkUrl: {
     type: String,
-    default: '',
+    default: "",
+  },
+
+  description: {
+    type: String,
+    default: "",
   },
 
   buttonText: {
     type: String,
-    default: 'Read More',
+    default: "Read More",
   },
 
   imageUrl: {
     type: String,
-    default: '',
+    default: "",
   },
 
   attachments: {
-    type: [
-      {
-        name: {
-          type: String,
-          required: true,
-        },
-        url: {
-          type: String,
-          required: true,
-        },
-        fileType: {
-          type: String,
-          default: '',
-        },
-      },
-    ],
+    type: [AttachmentSchema],
     default: [],
   },
 
@@ -65,7 +67,5 @@ const AnnouncementSchema = new mongoose.Schema({
   },
 });
 
-AnnouncementSchema.index({ createdAt: -1 });
-
 export default mongoose.models.Announcement ||
-  mongoose.model('Announcement', AnnouncementSchema);
+  mongoose.model("Announcement", AnnouncementSchema);
