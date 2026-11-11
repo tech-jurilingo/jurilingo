@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -37,24 +38,23 @@ const TheTeam = () => {
             >
               {/* Image Section */}
               <div className="w-full h-[450px] bg-gray-200 relative">
-                {/* 
-                  To show their real pictures, save the images in your 'public' folder 
-                  with the exact filenames below (e.g., jurilingo/public/srineetha.jpg) 
-                */}
                 <img
                   src={member.imagePath}
                   alt={member.name}
                   className="w-full h-full object-cover"
                   onError={(e) => {
-                    // Fallback if image is not found yet
-                    e.target.src = 'https://placehold.co/400x400/e2e8f0/64748b?text=' + member.name.split(' ')[0];
+                    e.target.src =
+                      'https://placehold.co/400x400/e2e8f0/64748b?text=' +
+                      member.name.split(' ')[0];
                   }}
                 />
               </div>
 
               {/* Text Content */}
               <div className="p-8">
-                <h3 className="text-2xl font-bold mb-1 text-gray-900">{member.name}</h3>
+                <h3 className="text-2xl font-bold mb-1 text-gray-900">
+                  {member.name}
+                </h3>
                 <p className="text-[#E3B65B] font-bold tracking-wide uppercase text-sm mb-4">
                   {member.role}
                 </p>
@@ -73,18 +73,6 @@ const TheTeam = () => {
 // Data array for team members
 const teamMembers = [
   {
-    name: 'TVS Srineetha',
-    role: 'Growth and Strategy Partner',
-    imagePath: '/srineetha.jpg',
-    bio: 'Srineetha, the Growth & Strategy Partner at JuriLingo, drives the platform’s outreach, growth, and strategic initiatives. With a naturally curious and analytical mindset, she brings a thoughtful approach to understanding challenges, identifying opportunities, and supporting the platform’s evolving vision. Srineetha values integrity, adaptability, and meaningful collaboration in her work, helping her contribute to strengthening the platform’s reach while supporting opportunities for sustainable and impactful growth.',
-  },
-  {
-    name: 'Ananya R S',
-    role: 'Web Development Consultant',
-    imagePath: '/ananya.jpg',
-    bio: 'Ananya serves as the Web Development Consultant at JuriLingo, contributing to the platform’s digital development and web experience. Through frontend development, website enhancement, and optimisation efforts, Ananya supports the creation of an intuitive and student-friendly platform designed to make legal learning more accessible and easy to navigate. As part of the JuriLingo team, she contributes to building a responsive and seamless digital environment that supports meaningful engagement and an improved learning experience for students and aspiring legal professionals.',
-  },
-  {
     name: 'Chhavi Agarwal',
     role: 'Digital Content Coordinator',
     imagePath: '/chhavi.jpg',
@@ -95,6 +83,12 @@ const teamMembers = [
     role: 'Media Production Coordinator',
     imagePath: '/aanchal.jpg',
     bio: 'Aanchal Singh is the Media Production Coordinator at JuriLingo, contributing to the platform through videography and podcast production. Working behind the camera, Aanchal plays a role in bringing meaningful legal discussions to audiences through thoughtfully produced visual content. Her work contributes to creating an interactive and engaging learning environment that encourages students to connect with ideas, experiences, and conversations within the legal field.',
+  },
+  {
+    name: 'Sarvesh R',
+    role: 'Growth, Partnerships & Community Associate | Web Development Consultant',
+    imagePath: '/sarvesh.jpg',
+    bio: 'Sarvesh R serves as the Growth, Partnerships & Community Associate and Web Development Consultant at JuriLingo, contributing to the platform’s strategic growth, partnerships, community engagement, and digital development. Through building collaborative relationships, supporting outreach initiatives, and working on the development and enhancement of the website, Sarvesh contributes to strengthening JuriLingo’s digital presence and expanding its reach among students and aspiring legal professionals. His work brings together an interest in legal technology, digital innovation, and community building, supporting JuriLingo’s vision of making legal education more accessible, engaging, and impactful.',
   },
 ];
 
