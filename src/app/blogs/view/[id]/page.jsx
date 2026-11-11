@@ -16,7 +16,7 @@ const normalizeSourceUrl = (value) => {
   const input = String(value || '').trim();
   if (!input) return '';
 
-  const candidate = /^https?:\\/\\//i.test(input)
+  const candidate = input.startsWith('http://') || input.startsWith('https://')
     ? input
     : `https://${input}`;
 
