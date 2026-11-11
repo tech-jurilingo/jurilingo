@@ -12,14 +12,19 @@ import {
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 
-const isValidSourceUrl = (value) => {
-  if (!value) return false;
+const normalizeSourceUrl = (value) => {
+  const input = String(value || '').trim();
+  if (!input) return '';
+
+  const candidate = /^https?:\\/\\//i.test(input)
+    ? input
+    : `https://${input}`;
 
   try {
-    const url = new URL(value);
-    return url.protocol === 'https:' || url.protocol === 'http:';
+    const url = new URL(candidate);
+    return ['https:', 'http:'].includes(url.protocol) ? url.href : '';
   } catch {
-    return false;
+    return '';
   }
 };
 
@@ -42,48 +47,79 @@ const BlogDetail = () => {
   const params = useParams();
   const blogId = params.id;
 
-  // Extract references from saved blog HTML.
-  const footnotes = useMemo(() => {
+  // Extract footnotes and citations from the saved blog HTML.
+  const { footnotes, citations } = useMemo(() => {
     if (!blog?.content || typeof window === 'undefined') {
-      return [];
+      return { footnotes: [], citations: [] };
     }
 
-    const parsed = new DOMParser().parseFromString(
-      blog.content,
-      'text/html'
-    );
+    const parsed = new DOMParser().parseFromString(blog.content, 'text/html');
 
-    const markers = Array.from(
-      parsed.querySelectorAll('sup[data-footnote-id]')
-    );
+    const extract = (selector, prefix, attributes) => {
+      const seen = new Set();
 
-    const seen = new Set();
+      return Array.from(parsed.querySelectorAll(selector))
+        .map((marker, index) => ({
+          id: marker.getAttribute(attributes.id) || `${prefix}-${index + 1}`,
+          number: marker.getAttribute(attributes.number) || String(index + 1),
+          text: marker.getAttribute(attributes.text) || '',
+          url: marker.getAttribute(attributes.url) || '',
+        }))
+        .filter((item) => {
+          if (seen.has(item.id) || !item.text.trim()) return false;
+          seen.add(item.id);
+          return true;
+        });
+    };
 
-    return markers
-      .map((marker, index) => ({
-        id:
-          marker.getAttribute('data-footnote-id') ||
-          `footnote-${index + 1}`,
-
-        number:
-          marker.getAttribute('data-footnote-number') ||
-          String(index + 1),
-
-        text:
-          marker.getAttribute('data-footnote-text') || '',
-
-        url:
-          marker.getAttribute('data-footnote-url') || '',
-      }))
-      .filter((note) => {
-        if (seen.has(note.id) || !note.text.trim()) {
-          return false;
-        }
-
-        seen.add(note.id);
-        return true;
-      });
+    return {
+      footnotes: extract('sup[data-footnote-id]', 'footnote', {
+        id: 'data-footnote-id',
+        number: 'data-footnote-number',
+        text: 'data-footnote-text',
+        url: 'data-footnote-url',
+      }),
+      citations: extract('sup[data-citation-id]', 'citation', {
+        id: 'data-citation-id',
+        number: 'data-citation-number',
+        text: 'data-citation-text',
+        url: 'data-citation-url',
+      }),
+    };
   }, [blog?.content]);
+
+  // Handle in-page navigation without allowing the browser to reload the blog route.
+  const handleReferenceNavigation = (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+
+    const link = target.closest(
+      'a[data-footnote-link="true"], a[id^="footnote-ref-"], a[data-citation-link="true"], a[id^="citation-ref-"]'
+    );
+
+    if (!link) return;
+
+    const href = link.getAttribute('href');
+    if (!href || !href.startsWith('#')) return;
+
+    const destination = document.getElementById(href.slice(1));
+    if (!destination) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    destination.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}${href}`);
+  };
+
+  const handleReturnToMarker = (event, markerId) => {
+    event.preventDefault();
+    const marker = document.getElementById(markerId);
+    if (!marker) return;
+
+    marker.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}#${markerId}`);
+  };
 
   // Fetch blog.
   useEffect(() => {
@@ -230,55 +266,6 @@ const BlogDetail = () => {
     }
   };
 
-  // Handle footnote navigation.
-  useEffect(() => {
-    if (!blog) return;
-
-    const handleFootnoteClick = (event) => {
-      const target = event.target;
-
-      if (!(target instanceof Element)) return;
-
-      const link = target.closest(
-        'a[data-footnote-link="true"], a[id^="footnote-ref-"]'
-      );
-
-      if (!link) return;
-
-      const href = link.getAttribute('href');
-
-      if (!href || !href.startsWith('#footnote-')) {
-        return;
-      }
-
-      event.preventDefault();
-
-      const destination = document.getElementById(href.substring(1));
-
-      if (!destination) return;
-
-      destination.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center',
-      });
-
-      window.history.replaceState(null, '', href);
-    };
-
-    const article = document.getElementById(
-      'published-blog-content'
-    );
-
-    if (article) {
-      article.addEventListener('click', handleFootnoteClick);
-    }
-
-    return () => {
-      if (article) {
-        article.removeEventListener('click', handleFootnoteClick);
-      }
-    };
-  }, [blog]);
 
   if (loading) {
     return (
@@ -371,6 +358,7 @@ const BlogDetail = () => {
 
         <article
           id="published-blog-content"
+          onClick={handleReferenceNavigation}
           className="
             prose prose-lg
             prose-headings:text-[#005F63]
@@ -393,8 +381,64 @@ const BlogDetail = () => {
           }}
         />
 
-        {/* References and footnotes */}
+        {/* Citations */}
+        {citations.length > 0 && (
+          <section
+            aria-labelledby="blog-citations-heading"
+            className="mt-12 border-t border-gray-200 pt-8"
+          >
+            <h2
+              id="blog-citations-heading"
+              className="text-xl font-bold font-serif text-[#005F63] mb-5"
+            >
+              Citations
+            </h2>
 
+            <ol className="list-decimal pl-6 space-y-4 text-sm text-gray-700">
+              {citations.map((citation) => {
+                const sourceUrl = normalizeSourceUrl(citation.url);
+                const markerId = `citation-ref-${citation.id}`;
+
+                return (
+                  <li
+                    key={citation.id}
+                    id={`citation-${citation.id}`}
+                    className="pl-1 scroll-mt-24"
+                  >
+                    <span>{citation.text}</span>
+
+                    {sourceUrl && (
+                      <>
+                        {' '}
+                        <a
+                          href={sourceUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[#005F63] underline break-all"
+                        >
+                          View source
+                        </a>
+                      </>
+                    )}
+
+                    {' '}
+                    <a
+                      href={`#${markerId}`}
+                      onClick={(event) => handleReturnToMarker(event, markerId)}
+                      aria-label={`Return to citation marker ${citation.number}`}
+                      title="Return to article"
+                      className="text-[#005F63] hover:text-[#E3B65B] font-bold ml-1"
+                    >
+                      ↩
+                    </a>
+                  </li>
+                );
+              })}
+            </ol>
+          </section>
+        )}
+
+        {/* Footnotes */}
         {footnotes.length > 0 && (
           <section
             aria-labelledby="blog-footnotes-heading"
@@ -408,60 +452,45 @@ const BlogDetail = () => {
             </h2>
 
             <ol className="list-decimal pl-6 space-y-4 text-sm text-gray-700">
-              {footnotes.map((note) => (
-                <li
-                  key={note.id}
-                  id={`footnote-${note.id}`}
-                  className="pl-1 scroll-mt-24"
-                >
-                  <span>{note.text}</span>
+              {footnotes.map((note) => {
+                const sourceUrl = normalizeSourceUrl(note.url);
+                const markerId = `footnote-ref-${note.id}`;
 
-                  {isValidSourceUrl(note.url) && (
-                    <>
-                      {' '}
-                      <a
-                        href={note.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[#005F63] underline break-all"
-                      >
-                        View source
-                      </a>
-                    </>
-                  )}
-
-                  {' '}
-
-                  <a
-                    href={`#footnote-ref-${note.id}`}
-                    onClick={(event) => {
-                      event.preventDefault();
-
-                      const marker = document.getElementById(
-                        `footnote-ref-${note.id}`
-                      );
-
-                      if (marker) {
-                        marker.scrollIntoView({
-                          behavior: 'smooth',
-                          block: 'center',
-                        });
-
-                        window.history.replaceState(
-                          null,
-                          '',
-                          `#footnote-ref-${note.id}`
-                        );
-                      }
-                    }}
-                    aria-label={`Return to footnote marker ${note.number}`}
-                    title="Return to article"
-                    className="text-[#005F63] hover:text-[#E3B65B] font-bold ml-1"
+                return (
+                  <li
+                    key={note.id}
+                    id={`footnote-${note.id}`}
+                    className="pl-1 scroll-mt-24"
                   >
-                    ↩
-                  </a>
-                </li>
-              ))}
+                    <span>{note.text}</span>
+
+                    {sourceUrl && (
+                      <>
+                        {' '}
+                        <a
+                          href={sourceUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[#005F63] underline break-all"
+                        >
+                          View source
+                        </a>
+                      </>
+                    )}
+
+                    {' '}
+                    <a
+                      href={`#${markerId}`}
+                      onClick={(event) => handleReturnToMarker(event, markerId)}
+                      aria-label={`Return to footnote marker ${note.number}`}
+                      title="Return to article"
+                      className="text-[#005F63] hover:text-[#E3B65B] font-bold ml-1"
+                    >
+                      ↩
+                    </a>
+                  </li>
+                );
+              })}
             </ol>
           </section>
         )}

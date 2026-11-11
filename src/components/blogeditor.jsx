@@ -34,6 +34,7 @@ import {
   Unlink,
   ImagePlus,
   BookOpen,
+  FileText,
 } from 'lucide-react';
 
 // --------------------------------------------------
@@ -167,15 +168,103 @@ const Footnote = Node.create({
 });
 
 // --------------------------------------------------
-// URL VALIDATION
+// CITATION EXTENSION
 // --------------------------------------------------
 
-const isAllowedWebUrl = (value) => {
+const Citation = Node.create({
+  name: 'citation',
+  group: 'inline',
+  inline: true,
+  atom: true,
+  selectable: true,
+
+  addAttributes() {
+    return {
+      id: { default: null },
+      number: { default: 1 },
+      text: { default: '' },
+      url: { default: '' },
+    };
+  },
+
+  parseHTML() {
+    return [{
+      tag: 'sup[data-citation-id]',
+      getAttrs: (element) => ({
+        id: element.getAttribute('data-citation-id'),
+        number: element.getAttribute('data-citation-number') || 1,
+        text: element.getAttribute('data-citation-text') || '',
+        url: element.getAttribute('data-citation-url') || '',
+      }),
+    }];
+  },
+
+  renderHTML({ HTMLAttributes }) {
+    const id = String(HTMLAttributes.id || 'citation');
+    const number = String(HTMLAttributes.number || 1);
+    return [
+      'sup',
+      {
+        'data-citation-id': id,
+        'data-citation-number': number,
+        'data-citation-text': HTMLAttributes.text || '',
+        'data-citation-url': HTMLAttributes.url || '',
+        class: 'jl-citation-marker',
+      },
+      ['a', {
+        href: `#citation-${id}`,
+        id: `citation-ref-${id}`,
+        'data-citation-link': 'true',
+        'aria-label': `Go to citation ${number}`,
+        class: 'text-[#005F63] font-semibold underline',
+      }, `[${number}]`],
+    ];
+  },
+
+  // Prevent in-editor clicks from navigating away from the editor.
+  addNodeView() {
+    return ({ node }) => {
+      const dom = document.createElement('sup');
+      const anchor = document.createElement('a');
+      const id = String(node.attrs.id || 'citation');
+      const number = String(node.attrs.number || 1);
+      dom.className = 'jl-citation-marker';
+      dom.setAttribute('data-citation-id', id);
+      dom.setAttribute('data-citation-number', number);
+      dom.setAttribute('data-citation-text', node.attrs.text || '');
+      dom.setAttribute('data-citation-url', node.attrs.url || '');
+      anchor.href = `#citation-${id}`;
+      anchor.id = `citation-ref-${id}`;
+      anchor.textContent = `[${number}]`;
+      anchor.className = 'text-[#005F63] font-semibold underline';
+      anchor.addEventListener('click', (event) => event.preventDefault());
+      dom.appendChild(anchor);
+      return { dom, contentDOM: null };
+    };
+  },
+});
+
+// --------------------------------------------------
+// URL NORMALIZATION
+// --------------------------------------------------
+
+// Accepts example.com, www.example.com and full http(s) URLs.
+// A scheme is added automatically when the user omits it.
+const normalizeWebUrl = (value) => {
+  const input = String(value || '').trim();
+  if (!input) return '';
+
+  const candidate = /^https?:\/\//i.test(input)
+    ? input
+    : `https://${input}`;
+
   try {
-    const parsed = new URL(value);
-    return parsed.protocol === 'https:' || parsed.protocol === 'http:';
+    const parsed = new URL(candidate);
+    if (!['https:', 'http:'].includes(parsed.protocol)) return null;
+    if (!parsed.hostname || (!parsed.hostname.includes('.') && parsed.hostname !== 'localhost')) return null;
+    return parsed.href;
   } catch {
-    return false;
+    return null;
   }
 };
 
@@ -222,6 +311,7 @@ const BlogEditor = () => {
 
       BlogImage,
       Footnote,
+      Citation,
 
       FontSize.configure({ types: ['textStyle'] }),
 
@@ -361,15 +451,17 @@ const BlogEditor = () => {
 
     if (enteredUrl === null) return;
 
-    const url = enteredUrl.trim();
+    const rawUrl = enteredUrl.trim();
 
-    if (!url) {
+    if (!rawUrl) {
       editor.chain().focus().extendMarkRange('link').unsetLink().run();
       return;
     }
 
-    if (!isAllowedWebUrl(url)) {
-      alert('Please enter a complete URL beginning with https:// or http://');
+    const url = normalizeWebUrl(rawUrl);
+
+    if (!url) {
+      alert('Please enter a valid website address, such as example.com or https://example.com.');
       return;
     }
 
@@ -433,12 +525,11 @@ const BlogEditor = () => {
 
     if (sourceUrl === null) return;
 
-    const url = sourceUrl.trim();
+    const rawUrl = sourceUrl.trim();
+    const url = rawUrl ? normalizeWebUrl(rawUrl) : '';
 
-    if (url && !isAllowedWebUrl(url)) {
-      alert(
-        'Please enter a complete source URL beginning with https:// or http://.'
-      );
+    if (rawUrl && !url) {
+      alert('Please enter a valid source address, such as example.com/article.');
       return;
     }
 
@@ -472,6 +563,45 @@ const BlogEditor = () => {
   };
 
   // --------------------------------------------------
+  // INSERT NUMBERED CITATION
+  // --------------------------------------------------
+
+  const addCitation = () => {
+    if (!editor) return;
+
+    const citationText = window.prompt('Enter the complete legal citation:');
+    if (!citationText || !citationText.trim()) return;
+
+    const sourceInput = window.prompt(
+      'Optional: enter a source link (https:// is not required):',
+      ''
+    );
+    if (sourceInput === null) return;
+
+    const rawUrl = sourceInput.trim();
+    const url = rawUrl ? normalizeWebUrl(rawUrl) : '';
+    if (rawUrl && !url) {
+      alert('Please enter a valid source address, such as example.com/case.');
+      return;
+    }
+
+    let highestNumber = 0;
+    editor.state.doc.descendants((node) => {
+      if (node.type.name === 'citation') {
+        highestNumber = Math.max(highestNumber, Number(node.attrs.number) || 0);
+      }
+    });
+
+    const number = highestNumber + 1;
+    const id = `jl-citation-${Date.now()}-${number}`;
+
+    editor.chain().focus().insertContent({
+      type: 'citation',
+      attrs: { id, number, text: citationText.trim(), url },
+    }).run();
+  };
+
+  // --------------------------------------------------
   // INSERT IMAGE
   // --------------------------------------------------
 
@@ -484,10 +614,10 @@ const BlogEditor = () => {
 
     if (!enteredUrl) return;
 
-    const src = enteredUrl.trim();
+    const src = normalizeWebUrl(enteredUrl.trim());
 
-    if (!isAllowedWebUrl(src)) {
-      alert('Please enter a valid image URL beginning with https:// or http://');
+    if (!src) {
+      alert('Please enter a valid image address, such as example.com/image.jpg.');
       return;
     }
 
@@ -670,6 +800,13 @@ const BlogEditor = () => {
               onClick={addFootnote}
               icon={BookOpen}
               label="Insert numbered footnote"
+              disabled={!editor}
+            />
+
+            <ToolbarButton
+              onClick={addCitation}
+              icon={FileText}
+              label="Insert numbered citation"
               disabled={!editor}
             />
 
