@@ -86,3 +86,5 @@ export async function DELETE(request, { params }) {
     );
   }
 }
+
+export default AnnouncementsList;
