@@ -45,11 +45,12 @@ export async function DELETE(request, { params }) {
       );
     }
 
-    // Delete associated GridFS banner image, if present
+    // Identify associated GridFS banner image
     const imageMatch = announcement.imageUrl?.match(
       /^\/api\/announcement\/image\/([a-f\d]{24})$/i
     );
 
+    // Delete associated GridFS image if present
     if (imageMatch) {
       try {
         const bucket = new mongoose.mongo.GridFSBucket(
