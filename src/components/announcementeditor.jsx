@@ -1,10 +1,19 @@
 
 "use client";
 
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Save, Megaphone, Plus, Trash2, Paperclip, Image as ImageIcon } from "lucide-react";
+import {
+  Save,
+  Megaphone,
+  Plus,
+  Trash2,
+  Paperclip,
+  Image as ImageIcon,
+  Upload,
+  X,
+} from "lucide-react";
 
 const AnnouncementEditor = () => {
   const [title, setTitle] = useState("");
@@ -17,15 +26,91 @@ const AnnouncementEditor = () => {
   const [attachments, setAttachments] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [imageError, setImageError] = useState("");
+
+  const fileInputRef = useRef(null);
+
   const colors = {
     teal: "#005F63",
     gold: "#E3B65B",
     bg: "#F5F5F0",
   };
 
+  const inputClass =
+    "w-full text-base text-gray-800 border border-gray-200 rounded-md p-3 focus:border-[#E3B65B] focus:ring-1 focus:ring-[#E3B65B] focus:outline-none";
+
+  const labelClass = "text-sm font-bold text-[#002B36]";
+
+  // Upload banner image to MongoDB GridFS
+  const handleImageUpload = async (event) => {
+    const file = event.target.files?.[0];
+
+    if (!file) return;
+
+    setImageError("");
+
+    const allowedTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+    ];
+
+    if (!allowedTypes.includes(file.type)) {
+      setImageError("Only JPEG, PNG and WebP images are allowed.");
+      event.target.value = "";
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      setImageError("Image size must not exceed 2 MB.");
+      event.target.value = "";
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("image", file);
+
+    setIsUploadingImage(true);
+
+    try {
+      const response = await fetch("/api/announcement/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success || !data.imageUrl) {
+        throw new Error(data.message || "Image upload failed.");
+      }
+
+      setImageUrl(data.imageUrl);
+      setImageError("");
+    } catch (error) {
+      console.error("Banner upload error:", error);
+      setImageError(error.message || "Unable to upload image.");
+    } finally {
+      setIsUploadingImage(false);
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
+  const removeImage = () => {
+    setImageUrl("");
+    setImageError("");
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
   const addAttachment = () => {
-    setAttachments([
-      ...attachments,
+    setAttachments((previous) => [
+      ...previous,
       { name: "", url: "", fileType: "" },
     ]);
   };
@@ -44,6 +129,19 @@ const AnnouncementEditor = () => {
     );
   };
 
+  const isValidWebUrl = (value) => {
+    if (!value) return true;
+
+    if (value.startsWith("/")) return true;
+
+    try {
+      const url = new URL(value);
+      return ["http:", "https:"].includes(url.protocol);
+    } catch {
+      return false;
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -52,14 +150,18 @@ const AnnouncementEditor = () => {
       return;
     }
 
-    if (linkUrl.trim() && !linkUrl.startsWith("/") &&
-        !/^https?:\/\//i.test(linkUrl)) {
+    if (isUploadingImage) {
+      alert("Please wait until the banner image finishes uploading.");
+      return;
+    }
+
+    if (!isValidWebUrl(linkUrl.trim())) {
       alert("Please enter a valid action URL.");
       return;
     }
 
-    if (imageUrl.trim() && !/^https?:\/\//i.test(imageUrl)) {
-      alert("Please enter a valid banner image URL.");
+    if (!isValidWebUrl(imageUrl.trim())) {
+      alert("Please upload a valid banner image.");
       return;
     }
 
@@ -68,7 +170,7 @@ const AnnouncementEditor = () => {
     );
 
     for (const file of validAttachments) {
-      if (!/^https?:\/\//i.test(file.url)) {
+      if (!isValidWebUrl(file.url.trim())) {
         alert("Please enter a valid URL for every attachment.");
         return;
       }
@@ -113,6 +215,8 @@ const AnnouncementEditor = () => {
       setImageUrl("");
       setIsFeatured(true);
       setAttachments([]);
+      setImageError("");
+
     } catch (error) {
       console.error("Announcement error:", error);
       alert("Server error while publishing announcement.");
@@ -120,11 +224,6 @@ const AnnouncementEditor = () => {
       setIsSubmitting(false);
     }
   };
-
-  const inputClass =
-    "w-full text-base text-gray-800 border border-gray-200 rounded-md p-3 focus:border-[#E3B65B] focus:ring-1 focus:ring-[#E3B65B] focus:outline-none";
-
-  const labelClass = "text-sm font-bold text-[#002B36]";
 
   return (
     <div
@@ -140,6 +239,7 @@ const AnnouncementEditor = () => {
               <Megaphone className="text-[#E3B65B]" />
               Create Announcement
             </h2>
+
             <p className="text-sm text-teal-100 mt-1">
               Publish a featured update on JuriLingo
             </p>
@@ -164,6 +264,7 @@ const AnnouncementEditor = () => {
             <label className={labelClass}>
               Announcement Title *
             </label>
+
             <input
               type="text"
               value={title}
@@ -179,6 +280,7 @@ const AnnouncementEditor = () => {
             <label className={labelClass}>
               Description
             </label>
+
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -193,6 +295,7 @@ const AnnouncementEditor = () => {
             <label className={labelClass}>
               Category
             </label>
+
             <select
               value={type}
               onChange={(e) => setType(e.target.value)}
@@ -205,43 +308,108 @@ const AnnouncementEditor = () => {
             </select>
           </div>
 
-          {/* Banner image */}
-          <div className="space-y-2">
-            <label className={labelClass}>
-              <ImageIcon size={16} className="inline mr-2" />
-              Banner Image URL
-            </label>
+          {/* Banner Image Upload */}
+          <div className="space-y-3 border border-gray-200 rounded-lg p-5">
+            <div>
+              <label className={labelClass}>
+                <ImageIcon size={17} className="inline mr-2" />
+                Announcement Banner Image
+              </label>
+
+              <p className="text-xs text-gray-500 mt-1">
+                Upload an image directly from your computer.
+                JPEG, PNG and WebP formats are supported. Maximum size: 2 MB.
+              </p>
+            </div>
+
             <input
-              type="url"
-              value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
-              placeholder="https://example.com/banner.jpg"
-              className={inputClass}
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              onChange={handleImageUpload}
+              disabled={isUploadingImage}
+              className="hidden"
+              id="announcement-banner-upload"
             />
 
+            {!imageUrl && (
+              <label
+                htmlFor="announcement-banner-upload"
+                className={`flex flex-col items-center justify-center gap-2 p-8 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${
+                  isUploadingImage
+                    ? "opacity-50 cursor-wait"
+                    : "hover:border-[#005F63] hover:bg-gray-50"
+                }`}
+              >
+                <Upload size={30} className="text-[#005F63]" />
+
+                <span className="font-semibold text-[#005F63]">
+                  {isUploadingImage ? "Uploading image..." : "Choose Banner Image"}
+                </span>
+
+                <span className="text-xs text-gray-400">
+                  Click to browse your computer
+                </span>
+              </label>
+            )}
+
+            {isUploadingImage && (
+              <div className="text-sm text-[#005F63] font-medium animate-pulse">
+                Uploading image to MongoDB. Please wait...
+              </div>
+            )}
+
+            {imageError && (
+              <p className="text-sm text-red-600">
+                {imageError}
+              </p>
+            )}
+
+            {/* Uploaded image preview */}
             {imageUrl && (
-              <div className="mt-3">
-                <p className="text-xs text-gray-500 mb-2">
-                  Image preview
+              <div className="space-y-3">
+                <p className="text-sm font-semibold text-gray-700">
+                  Banner Preview
                 </p>
+
                 <img
                   src={imageUrl}
-                  alt="Announcement preview"
-                  className="w-full max-h-64 object-cover rounded-lg border"
-                  onError={(e) => {
-                    e.currentTarget.style.display = "none";
-                  }}
+                  alt="Announcement banner preview"
+                  className="w-full max-h-72 object-cover rounded-lg border border-gray-200"
+                  onError={() =>
+                    setImageError("Unable to display the uploaded image.")
+                  }
                 />
+
+                <div className="flex flex-wrap gap-3">
+                  <label
+                    htmlFor="announcement-banner-upload"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-md text-sm font-semibold text-white bg-[#005F63] cursor-pointer hover:bg-[#00494c]"
+                  >
+                    <Upload size={16} />
+                    Replace Image
+                  </label>
+
+                  <button
+                    type="button"
+                    onClick={removeImage}
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-md text-sm font-semibold text-red-600 bg-red-50 hover:bg-red-100"
+                  >
+                    <X size={16} />
+                    Remove Image
+                  </button>
+                </div>
               </div>
             )}
           </div>
 
-          {/* Action button */}
+          {/* Action Button */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className={labelClass}>
                 Action Button Text
               </label>
+
               <input
                 type="text"
                 value={buttonText}
@@ -255,6 +423,7 @@ const AnnouncementEditor = () => {
               <label className={labelClass}>
                 Action URL
               </label>
+
               <input
                 type="text"
                 value={linkUrl}
@@ -265,7 +434,7 @@ const AnnouncementEditor = () => {
             </div>
           </div>
 
-          {/* Featured toggle */}
+          {/* Featured Toggle */}
           <div className="flex items-start gap-3 p-4 rounded-lg bg-[#F5F5F0]">
             <input
               id="featured"
@@ -274,17 +443,19 @@ const AnnouncementEditor = () => {
               onChange={(e) => setIsFeatured(e.target.checked)}
               className="mt-1 h-4 w-4 accent-[#005F63]"
             />
+
             <label htmlFor="featured" className="cursor-pointer">
               <span className="block text-sm font-bold text-[#002B36]">
                 Feature this announcement
               </span>
+
               <span className="block text-xs text-gray-600 mt-1">
                 Allow this announcement to appear in the featured popup.
               </span>
             </label>
           </div>
 
-          {/* Attachments */}
+          {/* Supporting Attachments */}
           <div className="space-y-4 border-t border-gray-100 pt-6">
             <div className="flex items-center justify-between gap-3">
               <div>
@@ -292,6 +463,7 @@ const AnnouncementEditor = () => {
                   <Paperclip size={18} />
                   Supporting Attachments
                 </h3>
+
                 <p className="text-xs text-gray-500 mt-1">
                   Add links to PDFs, Word documents or other files.
                 </p>
@@ -383,7 +555,7 @@ const AnnouncementEditor = () => {
 
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || isUploadingImage}
               className="px-8 py-2 rounded-md font-bold text-[#005F63] shadow-sm hover:shadow-md flex items-center gap-2 disabled:opacity-60"
               style={{ backgroundColor: colors.gold }}
             >
@@ -391,6 +563,7 @@ const AnnouncementEditor = () => {
               {isSubmitting ? "Publishing..." : "Publish Announcement"}
             </button>
           </div>
+
         </form>
       </div>
     </div>
