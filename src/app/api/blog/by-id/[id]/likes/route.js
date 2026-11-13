@@ -5,7 +5,6 @@ import dbConnect from "@/lib/db";
 import Blog from "@/models/Blog";
 import { verifyToken } from "@/middlewares/auth";
 
-// POST: Like or unlike a blog. Registered users only.
 export async function POST(request, { params }) {
   try {
     const authResult = await verifyToken(request);
@@ -29,44 +28,7 @@ export async function POST(request, { params }) {
 
     await dbConnect();
 
-    const userObjectId = new mongoose.Types.ObjectId(userId);
-
-    // Atomically toggle this user's like.
-    const blog = await Blog.findOneAndUpdate(
-      { _id: id },
-      [
-        {
-          $set: {
-            likes: {
-              $let: {
-                vars: {
-                  currentLikes: { $ifNull: ["$likes", []] },
-                },
-                in: {
-                  $cond: [
-                    { $in: [userObjectId, "$$currentLikes"] },
-                    {
-                      $filter: {
-                        input: "$$currentLikes",
-                        as: "like",
-                        cond: { $ne: ["$$like", userObjectId] },
-                      },
-                    },
-                    {
-                      $concatArrays: [
-                        "$$currentLikes",
-                        [userObjectId],
-                      ],
-                    },
-                  ],
-                },
-              },
-            },
-          },
-        },
-      ],
-      { new: true }
-    ).select("likes");
+    const blog = await Blog.findById(id).select("likes");
 
     if (!blog) {
       return NextResponse.json(
@@ -75,21 +37,36 @@ export async function POST(request, { params }) {
       );
     }
 
-    const liked = blog.likes.some(
+    const alreadyLiked = (blog.likes || []).some(
       (like) => like.toString() === userId.toString()
     );
 
+    if (alreadyLiked) {
+      await Blog.updateOne(
+        { _id: id },
+        { $pull: { likes: new mongoose.Types.ObjectId(userId) } }
+      );
+    } else {
+      await Blog.updateOne(
+        { _id: id },
+        { $addToSet: { likes: new mongoose.Types.ObjectId(userId) } }
+      );
+    }
+
+    const updatedBlog = await Blog.findById(id).select("likes");
+
     return NextResponse.json({
       success: true,
-      liked,
-      likeCount: blog.likes.length,
-      likes: blog.likes,
+      liked: !alreadyLiked,
+      likes: updatedBlog.likes,
+      likeCount: updatedBlog.likes.length,
     });
+
   } catch (error) {
     console.error("Toggle blog like error:", error);
 
     return NextResponse.json(
-      { success: false, message: "Unable to update like" },
+      { success: false, message: error.message || "Unable to update like" },
       { status: 500 }
     );
   }
