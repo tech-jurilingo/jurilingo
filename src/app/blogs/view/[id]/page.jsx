@@ -8,6 +8,8 @@ import {
   MessageCircle,
   Send,
   User,
+  Heart,
+  Eye,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -39,6 +41,7 @@ const BlogDetail = () => {
   const [commentsLoading, setCommentsLoading] = useState(false);
   const [submittingComment, setSubmittingComment] = useState(false);
   const [commentError, setCommentError] = useState('');
+  const [liking, setLiking] = useState(false);
 
   // Authentication
   const [currentUser, setCurrentUser] = useState(null);
@@ -156,6 +159,40 @@ const BlogDetail = () => {
     fetchBlog();
   }, [blogId]);
 
+  // Record one view per article per browser tab session.
+  useEffect(() => {
+    if (!blogId || !blog?._id || typeof window === 'undefined') return;
+
+    const storageKey = `jurilingo-viewed-${blogId}`;
+    if (sessionStorage.getItem(storageKey)) return;
+
+    const recordView = async () => {
+      try {
+        const response = await fetch(
+          `/api/blog/by-id/${encodeURIComponent(blogId)}/views`,
+          { method: 'POST', cache: 'no-store' }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+          console.error('Unable to record blog view:', data);
+          return;
+        }
+
+        // Store only after a successful response so failed requests can retry.
+        sessionStorage.setItem(storageKey, 'true');
+        setBlog((previous) =>
+          previous ? { ...previous, viewCount: data.viewCount } : previous
+        );
+      } catch (err) {
+        console.error('Unable to record blog view:', err);
+      }
+    };
+
+    recordView();
+  }, [blogId, blog?._id]);
+
   // Check logged-in user.
   useEffect(() => {
     const checkAuthentication = async () => {
@@ -181,6 +218,43 @@ const BlogDetail = () => {
 
     checkAuthentication();
   }, []);
+
+  // Like or unlike a blog. Registered users only.
+  const handleLikeToggle = async () => {
+    if (!currentUser || liking) return;
+
+    try {
+      setLiking(true);
+
+      const response = await fetch(
+        `/api/blog/by-id/${encodeURIComponent(blogId)}/likes`,
+        {
+          method: 'POST',
+          credentials: 'include',
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.status === 401) {
+        setCurrentUser(null);
+        throw new Error('Please log in to like this blog.');
+      }
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || 'Unable to update like.');
+      }
+
+      setBlog((previous) =>
+        previous ? { ...previous, likes: data.likes } : previous
+      );
+    } catch (err) {
+      console.error('Like update error:', err);
+      window.alert(err.message || 'Unable to update like.');
+    } finally {
+      setLiking(false);
+    }
+  };
 
   // Fetch comments.
   const fetchComments = async () => {
@@ -352,6 +426,35 @@ const BlogDetail = () => {
               {formattedDate}
             </div>
           )}
+        </div>
+
+        {/* Blog engagement statistics */}
+        <div className="flex flex-wrap items-center gap-6 mb-8">
+          <button
+            type="button"
+            onClick={handleLikeToggle}
+            disabled={!currentUser || authLoading || liking}
+            title={!currentUser ? 'Log in to like this blog' : 'Like or unlike this blog'}
+            className="inline-flex items-center gap-2 text-sm font-semibold text-gray-600 hover:text-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            <Heart
+              size={20}
+              className={
+                currentUser && blog.likes?.some(
+                  (like) => String(like?._id || like) === String(currentUser.userId)
+                )
+                  ? 'fill-red-500 text-red-500'
+                  : ''
+              }
+            />
+            {blog.likes?.length || 0} Likes
+            {liking ? '...' : ''}
+          </button>
+
+          <div className="inline-flex items-center gap-2 text-sm text-gray-500">
+            <Eye size={20} />
+            {blog.viewCount || 0} Views
+          </div>
         </div>
 
         {/* Published blog content */}
